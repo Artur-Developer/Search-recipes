@@ -1,0 +1,27 @@
+{
+  "name": "search-recipes",
+  "version": "1.0.0",
+  "description": "App for search any recipes for cooking at home.  =======",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "webpack": "^4.43.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Artur-Developer/Search-recipes.git"
+  },
+  "author": "tearofenemy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Artur-Developer/Search-recipes/issues"
+  },
+  "homepage": "https://github.com/Artur-Developer/Search-recipes#readme"
+}
