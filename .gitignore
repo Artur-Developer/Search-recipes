@@ -1,4 +1,4 @@
 .babelrc
-node_modules/
-test/
-src/
+/node_modules
+./test/
+./src/
