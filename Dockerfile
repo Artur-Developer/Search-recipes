@@ -4,4 +4,6 @@ COPY ./docker /app/docker/
 
 RUN cp -R /app/docker/config/supervisor/conf.d/* /opt/docker/etc/supervisor.d/
 
+RUN echo '* * * * * root php /app/artisan schedule:run >> /dev/null 2>&1' >> /etc/crontab
+
 WORKDIR app
