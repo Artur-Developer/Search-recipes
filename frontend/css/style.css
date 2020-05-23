@@ -269,6 +269,17 @@ body {
     align-items: center;
     height: 100%;
     transition: all .3s;
+    background: -moz-linear-gradient(to right bottom, #FBDB89, #F48982);
+    background: -webkit-linear-gradient(to right bottom, #FBDB89, #F48982);
+    background: linear-gradient(to right bottom, #FBDB89, #F48982);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.likes__field .fa {
+    display: inline;
 }
 
 .likes__field:hover {
