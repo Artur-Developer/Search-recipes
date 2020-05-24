@@ -2,7 +2,7 @@
     "presets": [
         ["env", {
             "targets": {
-                "browser": [
+                "browsers": [
                     "last 5 versions",
                     "ie >= 8"
                 ]
