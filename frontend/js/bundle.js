@@ -416,7 +416,19 @@ eval("// shim for using process in browser\nvar process = module.exports = {};\n
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ \"./node_modules/axios/index.js\");\n/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);\n\nconst { log } = console;\n\n\nconst getRecipe = async(query) => {\n    const proxy = 'https://cors-anywhere.herokuapp.com/';\n    const url = `https://forkify-api.herokuapp.com/api/search?q=${query}`;\n    const res = await axios__WEBPACK_IMPORTED_MODULE_0___default()(`${proxy}${url}`);\n\n    log(res);\n};\n\n\ngetRecipe('pizza');\n\n//# sourceURL=webpack:///./src/js/index.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _models_Search__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./models/Search */ \"./src/js/models/Search.js\");\n\n\nconst search = new _models_Search__WEBPACK_IMPORTED_MODULE_0__[\"default\"](`pizza`);\n\nconsole.log(search);\n\n//# sourceURL=webpack:///./src/js/index.js?");
+
+/***/ }),
+
+/***/ "./src/js/models/Search.js":
+/*!*********************************!*\
+  !*** ./src/js/models/Search.js ***!
+  \*********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return Search; });\n/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ \"./node_modules/axios/index.js\");\n/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);\n\n\nclass Search {\n    constructor(query) {\n        this.query = query;\n    }\n\n    async getResults() {\n        try {\n            const url = `https://forkify-api.herokuapp.com/api/search?q=${this.query}`;\n            const result = await axios__WEBPACK_IMPORTED_MODULE_0___default()(`${url}`);\n            log(result);\n        } catch (e) {\n            throw new Error(e);\n        }\n    }\n}\n\n//# sourceURL=webpack:///./src/js/models/Search.js?");
 
 /***/ }),
 
