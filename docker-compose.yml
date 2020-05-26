@@ -11,6 +11,7 @@ services:
         max-file: "5"
     build:
       context: ./
+    user: '1000:1002'
     ports:
       - 80:80
     volumes:
