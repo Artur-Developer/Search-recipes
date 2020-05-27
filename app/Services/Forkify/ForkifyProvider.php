@@ -5,6 +5,9 @@ namespace App\Services\Forkify;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 
+use Illuminate\Support\Collection;
+
+use function collect;
 use function json_decode;
 
 class ForkifyProvider
@@ -23,7 +26,7 @@ class ForkifyProvider
      *
      * @return array
      */
-    public function getRecipe(int $recipeId): array
+    public function getRecipe(int $recipeId): Collection
     {
         $uri = 'api/get';
         $options = [
@@ -41,11 +44,11 @@ class ForkifyProvider
      *
      * @return array
      */
-    private function makeGetRequest(string $uri, array $options = []): array
+    private function makeGetRequest(string $uri, array $options = []): Collection
     {
         $response = $this->client->get($uri, $options)->getBody()->getContents();
 
-        return json_decode($response, true);
+        return collect(json_decode($response, true));
     }
 
     /** @see https://forkify-api.herokuapp.com
@@ -53,7 +56,7 @@ class ForkifyProvider
      *
      * @return array
      */
-    public function searchRecipe(string $queryText): array
+    public function searchRecipe(string $queryText): Collection
     {
         $uri = 'api/search';
         $options = [
