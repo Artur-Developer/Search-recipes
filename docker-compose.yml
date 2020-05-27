@@ -1,0 +1,56 @@
+version: '2.4'
+services:
+  sr-app:
+    container_name: search-recipes-app
+    mem_limit: 1024m
+    mem_reservation: 300m
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    build:
+      context: ./
+    user: '1000:1002'
+    ports:
+      - 80:80
+    volumes:
+      - ./:/app:delegated
+    environment:
+      WEB_DOCUMENT_ROOT: /app/public
+    depends_on:
+      - sr-redis
+  sr-db:
+    container_name: search-recipes-db
+    command: --default-authentication-plugin=mysql_native_password
+    image: mysql
+    restart: always
+    volumes:
+      - mysql:/var/lib/mysql
+    environment:
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: search-recipes
+    ports:
+      - 3306:3306
+  sr-pma:
+    container_name: search-recipes-pma
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: sr-db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 8080:80
+    depends_on:
+      - sr-db
+      - sr-app
+  sr-redis:
+    container_name: search-recipes-redis
+    image: redis
+    ports:
+      - 6379:6379
+volumes:
+  mysql:
+    driver: local
