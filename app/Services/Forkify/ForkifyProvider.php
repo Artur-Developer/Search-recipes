@@ -42,7 +42,7 @@ class ForkifyProvider
      * @param string $uri
      * @param array $options
      *
-     * @return array
+     * @return Collection
      */
     private function makeGetRequest(string $uri, array $options = []): Collection
     {
@@ -52,16 +52,16 @@ class ForkifyProvider
     }
 
     /** @see https://forkify-api.herokuapp.com
-     * @param string $queryText
+     * @param ForkifySearchParams $searchParam
      *
-     * @return array
+     * @return Collection
      */
-    public function searchRecipe(string $queryText): Collection
+    public function searchRecipe(ForkifySearchParams $searchParam): Collection
     {
         $uri = 'api/search';
         $options = [
             RequestOptions::QUERY => [
-                'q' => $queryText,
+                'q' => $searchParam,
             ],
         ];
 
