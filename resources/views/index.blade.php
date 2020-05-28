@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
     <title>Receipe app</title>
 </head>
@@ -16,7 +15,7 @@
 <body>
     <div class="container">
         <header class="header">
-            <img src="../frontend/img/logo.png" alt="Logo" class="header__logo">
+            <img src="img/logo.png" alt="Logo" class="header__logo">
             <form class="search">
                 <input type="text" class="search__field" placeholder="Search over 1,000,000 recipes...">
                 <button class="btn search__btn">
@@ -419,11 +418,10 @@
                 </li>
 
             </ul>
-            -->
+-->
         </div>
     </div>
-    <!-- <script  src="js/bundle.js"></script> -->
-    <script src="js/bundle.js"></script>
+    <script src="{{ asset('js/app.js') }}"></script>
 </body>
 
 </html>
