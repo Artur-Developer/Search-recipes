@@ -11,7 +11,6 @@ require('./bootstrap');
 */
 const state = {};
 
-
 const searchController = async() => {
 
     // Get query from input
