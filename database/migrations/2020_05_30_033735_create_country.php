@@ -28,6 +28,6 @@ class CreateCountry extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('_country');
+        Schema::dropIfExists('country');
     }
 }

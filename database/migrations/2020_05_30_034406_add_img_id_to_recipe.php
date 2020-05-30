@@ -33,12 +33,12 @@ class AddImgIdToRecipe extends Migration
     public function down()
     {
         Schema::table('recipe', function (Blueprint $table) {
-            $table->dropForeign('img_id');
-            $table->dropForeign('author_id');
+            $table->dropForeign(['img_id']);
+            $table->dropForeign(['author_id']);
         });
 
         Schema::table('author', function (Blueprint $table) {
-            $table->dropForeign('img_id');
+            $table->dropForeign(['img_id']);
         });
     }
 }
