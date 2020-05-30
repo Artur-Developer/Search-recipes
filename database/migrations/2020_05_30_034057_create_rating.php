@@ -14,7 +14,10 @@ class CreateRating extends Migration
     public function up()
     {
         Schema::create('rating', function (Blueprint $table) {
-            $table->id();
+            $table->foreignId('recipe_id')->constrained('recipe');
+            $table->enum('rating', ['1', '2', '3', '4', '5']);
+            $table->text('comment');
+            $table->bigInteger('user_id')->default(null);
             $table->timestamps();
         });
     }

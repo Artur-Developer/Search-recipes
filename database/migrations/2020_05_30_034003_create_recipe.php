@@ -15,6 +15,11 @@ class CreateRecipe extends Migration
     {
         Schema::create('recipe', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('type_id')->constrained('refs_setting_type');
+            $table->foreignId('channel_id')->constrained('channel');
+            $table->string('name',255);
+            $table->enum('rating', ['1', '2', '3', '4', '5']);
+            $table->text('description');
             $table->timestamps();
         });
     }

@@ -15,6 +15,10 @@ class CreateChannel extends Migration
     {
         Schema::create('channel', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('type_id')->constrained('refs_setting_type');
+            $table->string('name',255);
+            $table->text('text');
+            $table->text('description');
             $table->timestamps();
         });
     }

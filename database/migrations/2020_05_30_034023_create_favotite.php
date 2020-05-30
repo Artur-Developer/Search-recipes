@@ -14,8 +14,9 @@ class CreateFavotite extends Migration
     public function up()
     {
         Schema::create('favotite', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->foreignId('recipe_id')->constrained('recipe');
+            $table->foreignId('user_id')->constrained('users');
+            $table->dateTime('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
     }
 

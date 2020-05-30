@@ -14,9 +14,14 @@ class CreateCompany extends Migration
     public function up()
     {
         Schema::create('company', function (Blueprint $table) {
-            $table->id();
+            $table->id('id');
+            $table->foreignId('type_id')->constrained('refs_setting_type');
+            $table->string('name',255);
+            $table->text('description');
+            $table->string('code',255);
             $table->timestamps();
         });
+
     }
 
     /**

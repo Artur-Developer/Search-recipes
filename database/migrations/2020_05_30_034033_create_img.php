@@ -15,6 +15,10 @@ class CreateImg extends Migration
     {
         Schema::create('img', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('type_id')->constrained('refs_setting_type');
+            $table->foreignId('entity_id')->constrained('recipe');
+            $table->string('path',255);
+            $table->text('description');
             $table->timestamps();
         });
     }

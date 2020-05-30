@@ -14,8 +14,10 @@ class CreateIngrToIngr extends Migration
     public function up()
     {
         Schema::create('ingr_to_ingr', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->foreignId('ingredient_from')->constrained('refs_ingredient');
+            $table->foreignId('recipe_id')->constrained('recipe');
+            $table->text('ingredient_to');
+            $table->dateTime('creat_at');
         });
     }
 

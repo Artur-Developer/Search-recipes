@@ -15,7 +15,11 @@ class CreateAuthor extends Migration
     {
         Schema::create('author', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->foreignId('company_id')->constrained('company');
+            $table->string('first_name', 255);
+            $table->string('last_name', 255);
+            $table->string('middle_name', 255);
+            $table->date('born_date');
         });
     }
 

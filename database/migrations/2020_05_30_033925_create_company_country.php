@@ -14,8 +14,9 @@ class CreateCompanyCountry extends Migration
     public function up()
     {
         Schema::create('company_country', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->foreignId('country_id')->constrained('country');
+            $table->foreignId('company_id')->constrained('company');
+            $table->dateTime('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
     }
 

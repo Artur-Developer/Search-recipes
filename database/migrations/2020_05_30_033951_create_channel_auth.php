@@ -15,7 +15,12 @@ class CreateChannelAuth extends Migration
     {
         Schema::create('channel_auth', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('channel_id')->constrained('channel');
+            $table->string('username', 255);
+            $table->text('password');
+            $table->text('key');
             $table->timestamps();
+
         });
     }
 
