@@ -20035,13 +20035,77 @@ module.exports = function(module) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _models_Search__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./models/Search */ "./resources/js/models/Search.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _models_Search__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./models/Search */ "./resources/js/models/Search.js");
+/* harmony import */ var _views_searchView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./views/searchView */ "./resources/js/views/searchView.js");
+/* harmony import */ var _views_base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./views/base */ "./resources/js/views/base.js");
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+
+
 
 
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
+/*** Global state of the app
+- Search object
+- Current recipe object
+- Shop list
+- Favorites recipes
+*/
 
-var search = new _models_Search__WEBPACK_IMPORTED_MODULE_0__["default"]("pizza");
-console.log(search);
+
+var state = {};
+
+var searchController = /*#__PURE__*/function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+    var query;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            // Get query from input
+            query = _views_searchView__WEBPACK_IMPORTED_MODULE_2__["getInput"](); //TODO
+
+            if (!query) {
+              _context.next = 8;
+              break;
+            }
+
+            // Save search model into state
+            state.search = new _models_Search__WEBPACK_IMPORTED_MODULE_1__["default"](query); //Prepare UI to render
+
+            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearInput"]();
+            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearResult"](); //Get a result
+
+            _context.next = 7;
+            return state.search.getRecipe();
+
+          case 7:
+            //Render result
+            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["render"](state.search.result);
+
+          case 8:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  }));
+
+  return function searchController() {
+    return _ref.apply(this, arguments);
+  };
+}();
+
+_views_base__WEBPACK_IMPORTED_MODULE_3__["elements"].search_form.addEventListener('submit', function (e) {
+  e.preventDefault();
+  searchController();
+});
 
 /***/ }),
 
@@ -20113,43 +20177,44 @@ var Search = /*#__PURE__*/function () {
   }
 
   _createClass(Search, [{
-    key: "getResults",
+    key: "getRecipe",
     value: function () {
-      var _getResults = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var url, result;
+      var _getRecipe = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var proxy, url, res;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.prev = 0;
-                url = "https://forkify-api.herokuapp.com/api/search?q=".concat(this.query);
-                _context.next = 4;
+                proxy = 'https://cors-anywhere.herokuapp.com/';
+                url = "".concat(proxy, "https://forkify-api.herokuapp.com/api/search?q=").concat(this.query);
+                _context.prev = 2;
+                _context.next = 5;
                 return axios__WEBPACK_IMPORTED_MODULE_1___default()("".concat(url));
 
-              case 4:
-                result = _context.sent;
-                log(result);
-                _context.next = 11;
+              case 5:
+                res = _context.sent;
+                this.result = res.data.recipes;
+                _context.next = 12;
                 break;
 
-              case 8:
-                _context.prev = 8;
-                _context.t0 = _context["catch"](0);
+              case 9:
+                _context.prev = 9;
+                _context.t0 = _context["catch"](2);
                 throw new Error(_context.t0);
 
-              case 11:
+              case 12:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this, [[0, 8]]);
+        }, _callee, this, [[2, 9]]);
       }));
 
-      function getResults() {
-        return _getResults.apply(this, arguments);
+      function getRecipe() {
+        return _getRecipe.apply(this, arguments);
       }
 
-      return getResults;
+      return getRecipe;
     }()
   }]);
 
@@ -20157,6 +20222,76 @@ var Search = /*#__PURE__*/function () {
 }();
 
 
+
+/***/ }),
+
+/***/ "./resources/js/views/base.js":
+/*!************************************!*\
+  !*** ./resources/js/views/base.js ***!
+  \************************************/
+/*! exports provided: elements */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "elements", function() { return elements; });
+var elements = {
+  search_form: document.querySelector('.search'),
+  //search form
+  search_input: document.querySelector('.search__field'),
+  //input for search
+  search_res_list: document.querySelector('.results__list') //result list to render searched items
+
+};
+
+/***/ }),
+
+/***/ "./resources/js/views/searchView.js":
+/*!******************************************!*\
+  !*** ./resources/js/views/searchView.js ***!
+  \******************************************/
+/*! exports provided: getInput, clearInput, clearResult, render */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getInput", function() { return getInput; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearInput", function() { return clearInput; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearResult", function() { return clearResult; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base */ "./resources/js/views/base.js");
+
+var getInput = function getInput() {
+  return _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_input.value;
+}; //assign value from input
+
+var clearInput = function clearInput() {
+  return _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_input.value = '';
+}; //clear input
+
+var clearResult = function clearResult() {
+  return _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_res_list.innerHTML = '';
+}; //clear result list
+
+/**
+ *
+ *  Method for prepare render recipes
+ */
+
+var renderRecipe = function renderRecipe(recipe) {
+  var template_recipe = "<li>\n            <a class=\"results__link\" href=\"#".concat(recipe.recipe_id, "\">\n                <figure class=\"results__fig\">\n                    <img src=\"").concat(recipe.image_url, "\" alt=\"").concat(recipe.title, "\">\n                </figure>\n                <div class=\"results__data\">\n                    <h4 class=\"results__name\">").concat(recipe.title, "</h4>\n                    <p class=\"results__author\">").concat(recipe.publisher, "</p>\n                </div>\n            </a>\n        </li>\n    ");
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_res_list.insertAdjacentHTML('beforeend', template_recipe);
+};
+/***
+ *
+ * Render all searched recipes
+ *
+ */
+
+
+var render = function render(recipes) {
+  recipes.forEach(renderRecipe);
+};
 
 /***/ }),
 
