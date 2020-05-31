@@ -14,7 +14,7 @@ class CreateRefsSettingType extends Migration
     public function up()
     {
         Schema::create('refs_setting_type', function (Blueprint $table) {
-            $table->id('id');
+            $table->id();
             $table->string('object_name',255);
             $table->string('status_name',255);
             $table->string('code',255);

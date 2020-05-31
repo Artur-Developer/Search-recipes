@@ -17,7 +17,7 @@ class CreateChannel extends Migration
             $table->id();
             $table->foreignId('type_id')->constrained('refs_setting_type');
             $table->string('name',255);
-            $table->text('text');
+            $table->text('url');
             $table->text('description');
             $table->timestamps();
         });
