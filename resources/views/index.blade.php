@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
     <title>Receipe app</title>
 </head>
@@ -16,7 +15,7 @@
 <body>
     <div class="container">
         <header class="header">
-            <img src="../frontend/img/logo.png" alt="Logo" class="header__logo">
+            <img src="img/logo.png" alt="Logo" class="header__logo">
             <form class="search">
                 <input type="text" class="search__field" placeholder="Search over 1,000,000 recipes...">
                 <button class="btn search__btn">
@@ -48,7 +47,6 @@
             </div>
         </header>
 
-
         <div class="results">
             <ul class="results__list">
                 <!--
@@ -60,113 +58,6 @@
                         <div class="results__data">
                             <h4 class="results__name">Pasta with Tomato ...</h4>
                             <p class="results__author">The Pioneer Woman</p>
-                        </div>
-                    </a>
-                </li>
-
-                <li>
-                    <a class="results__link" href="#76767">
-                        <figure class="results__fig">
-                            <img src="img/test-2.jpg" alt="Test">
-                        </figure>
-                        <div class="results__data">
-                            <h4 class="results__name">Pasta Salad with ...</h4>
-                            <p class="results__author">Spicy Perspective</p>
-                        </div>
-                    </a>
-                </li>
-
-                <li>
-                    <a class="results__link" href="#85354">
-                        <figure class="results__fig">
-                            <img src="img/test-3.jpg" alt="Test">
-                        </figure>
-                        <div class="results__data">
-                            <h4 class="results__name">Homemade Tomato ...</h4>
-                            <p class="results__author">All Recipes</p>
-                        </div>
-                    </a>
-                </li>
-
-                <li>
-                    <a class="results__link" href="#43563">
-                        <figure class="results__fig">
-                            <img src="img/test-4.jpg" alt="Test">
-                        </figure>
-                        <div class="results__data">
-                            <h4 class="results__name">Pasta with Tomato ...</h4>
-                            <p class="results__author">The Pioneer Woman</p>
-                        </div>
-                    </a>
-                </li>
-
-                <li>
-                    <a class="results__link" href="#2256665">
-                        <figure class="results__fig">
-                            <img src="img/test-5.jpg" alt="Test">
-                        </figure>
-                        <div class="results__data">
-                            <h4 class="results__name">Greek Pasta with ...</h4>
-                            <p class="results__author">Chow</p>
-                        </div>
-                    </a>
-                </li>
-
-                <li>
-                    <a class="results__link" href="#7567567">
-                        <figure class="results__fig">
-                            <img src="img/test-9.jpg" alt="Test">
-                        </figure>
-                        <div class="results__data">
-                            <h4 class="results__name">Cherry tomato, kale ...</h4>
-                            <p class="results__author">BBC Good Food</p>
-                        </div>
-                    </a>
-                </li>
-
-                <li>
-                    <a class="results__link" href="#5676577">
-                        <figure class="results__fig">
-                            <img src="img/test-7.jpg" alt="Test">
-                        </figure>
-                        <div class="results__data">
-                            <h4 class="results__name">Pasta with Fresh ...</h4>
-                            <p class="results__author">Chow</p>
-                        </div>
-                    </a>
-                </li>
-
-                <li>
-                    <a class="results__link" href="#98798">
-                        <figure class="results__fig">
-                            <img src="img/test-8.jpg" alt="Test">
-                        </figure>
-                        <div class="results__data">
-                            <h4 class="results__name">Buttery Tomato Pasta ...</h4>
-                            <p class="results__author">Simply Recipes</p>
-                        </div>
-                    </a>
-                </li>
-                <li>
-                    <a class="results__link" href="#5464646456">
-                        <figure class="results__fig">
-                            <img src="img/test-10.jpg" alt="Test">
-                        </figure>
-                        <div class="results__data">
-                            <h4 class="results__name">Pesto Pasta Salad ...</h4>
-                            <p class="results__author">Eats Well With Others</p>
-                        </div>
-                    </a>
-                </li>
-
-                <li>
-                    <a class="results__link" href="#345345435">
-                        <figure class="results__fig">
-                            <img src="img/test-6.jpg" alt="Test">
-                        </figure>
-                        <div class="results__data">
-                            <h4 class="results__name">Pasta with Roasted ...</h4>
-                            <p class="results__author">Two Peas and Their Pod</p>
                         </div>
                     </a>
                 </li>
@@ -419,11 +310,9 @@
                 </li>
 
             </ul>
-            -->
+-->
         </div>
     </div>
-    <!-- <script  src="js/bundle.js"></script> -->
-    <script src="js/bundle.js"></script>
+    <script src="{{ asset('js/app.js') }}"></script>
 </body>
-
 </html>

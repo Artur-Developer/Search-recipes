@@ -1,0 +1,1 @@
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.elements=void 0;var elements={search_form:document.querySelector(".search"),search_input:document.querySelector(".search__field"),search_res_list:document.querySelector(".results__list")};exports.elements=elements;
