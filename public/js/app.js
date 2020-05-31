@@ -20072,7 +20072,7 @@ var searchController = /*#__PURE__*/function () {
             query = _views_searchView__WEBPACK_IMPORTED_MODULE_2__["getInput"](); //TODO
 
             if (!query) {
-              _context.next = 8;
+              _context.next = 10;
               break;
             }
 
@@ -20080,16 +20080,18 @@ var searchController = /*#__PURE__*/function () {
             state.search = new _models_Search__WEBPACK_IMPORTED_MODULE_1__["default"](query); //Prepare UI to render
 
             _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearInput"]();
-            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearResult"](); //Get a result
+            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearResult"]();
+            Object(_views_base__WEBPACK_IMPORTED_MODULE_3__["render_loader"])(_views_base__WEBPACK_IMPORTED_MODULE_3__["elements"].search_parent); //Get a result
 
-            _context.next = 7;
+            _context.next = 8;
             return state.search.getRecipe();
 
-          case 7:
-            //Render result
+          case 8:
+            Object(_views_base__WEBPACK_IMPORTED_MODULE_3__["clearLoader"])(); //Render result
+
             _views_searchView__WEBPACK_IMPORTED_MODULE_2__["render"](state.search.result);
 
-          case 8:
+          case 10:
           case "end":
             return _context.stop();
         }
@@ -20229,19 +20231,35 @@ var Search = /*#__PURE__*/function () {
 /*!************************************!*\
   !*** ./resources/js/views/base.js ***!
   \************************************/
-/*! exports provided: elements */
+/*! exports provided: elements, elementsString, render_loader, clearLoader */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "elements", function() { return elements; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "elementsString", function() { return elementsString; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render_loader", function() { return render_loader; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearLoader", function() { return clearLoader; });
 var elements = {
   search_form: document.querySelector('.search'),
   //search form
   search_input: document.querySelector('.search__field'),
   //input for search
-  search_res_list: document.querySelector('.results__list') //result list to render searched items
+  search_res_list: document.querySelector('.results__list'),
+  //result list to render searched items
+  search_parent: document.querySelector('.results') //parent section for redner
 
+};
+var elementsString = {
+  loader: 'custom_loader'
+};
+var render_loader = function render_loader(parent) {
+  var template_loader = "\n            <div class=\"custom_loader\">\n                <svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n                    viewBox=\"0 0 100 100\" enable-background=\"new 0 0 100 100\" xml:space=\"preserve\">\n                    <rect fill=\"#FBDB89\" width=\"3\" height=\"100\" transform=\"translate(0) rotate(180 3 50)\">\n                    <animate\n                        attributeName=\"height\"\n                        attributeType=\"XML\"\n                        dur=\"1s\"\n                        values=\"30; 100; 30\"\n                        repeatCount=\"indefinite\"/>\n                    </rect>\n                    <rect x=\"17\" fill=\"#FBDB89\" width=\"3\" height=\"100\" transform=\"translate(0) rotate(180 20 50)\">\n                        <animate\n                            attributeName=\"height\"\n                            attributeType=\"XML\"\n                            dur=\"1s\"\n                            values=\"30; 100; 30\"\n                            repeatCount=\"indefinite\"\n                            begin=\"0.1s\"/>\n                    </rect>\n                    <rect x=\"40\" fill=\"#FBDB89\" width=\"3\" height=\"100\" transform=\"translate(0) rotate(180 40 50)\">\n                        <animate\n                            attributeName=\"height\"\n                            attributeType=\"XML\"\n                            dur=\"1s\"\n                            values=\"30; 100; 30\"\n                            repeatCount=\"indefinite\"\n                            begin=\"0.3s\"/>\n                    </rect>\n                    <rect x=\"60\" fill=\"#FBDB89\" width=\"3\" height=\"100\" transform=\"translate(0) rotate(180 58 50)\">\n                        <animate\n                            attributeName=\"height\"\n                            attributeType=\"XML\"\n                            dur=\"1s\"\n                            values=\"30; 100; 30\"\n                            repeatCount=\"indefinite\"\n                            begin=\"0.5s\"/>\n                    </rect>\n                    <rect x=\"80\" fill=\"#FBDB89\" width=\"3\" height=\"100\" transform=\"translate(0) rotate(180 76 50)\">\n                        <animate\n                            attributeName=\"height\"\n                            attributeType=\"XML\"\n                            dur=\"1s\"\n                            values=\"30; 100; 30\"\n                            repeatCount=\"indefinite\"\n                            begin=\"0.1s\"/>\n                    </rect>\n                </svg>\n            </div>";
+  parent.insertAdjacentHTML('afterbegin', template_loader);
+};
+var clearLoader = function clearLoader() {
+  var loader = document.querySelector(".".concat(elementsString.loader));
+  if (loader) loader.parentNode.removeChild(loader);
 };
 
 /***/ }),
@@ -20272,6 +20290,13 @@ var clearInput = function clearInput() {
 var clearResult = function clearResult() {
   return _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_res_list.innerHTML = '';
 }; //clear result list
+
+/**
+ * Function that splice title, if his length > 17
+ *
+ * @param {string} title
+ * @param {num} limit
+ */
 
 var limitRecipeTitle = function limitRecipeTitle(title) {
   var limit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 17;

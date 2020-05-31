@@ -1,6 +1,6 @@
 import Search from './models/Search';
 import * as searchView from './views/searchView';
-import { elements } from './views/base';
+import { elements, render_loader, clearLoader } from './views/base';
 require('./bootstrap');
 
 /*** Global state of the app
@@ -23,10 +23,12 @@ const searchController = async() => {
         //Prepare UI to render
         searchView.clearInput();
         searchView.clearResult();
+        render_loader(elements.search_parent);
 
         //Get a result
         await state.search.getRecipe();
 
+        clearLoader();
         //Render result
         searchView.render(state.search.result);
     }
