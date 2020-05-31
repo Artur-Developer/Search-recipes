@@ -6,7 +6,12 @@ export const clearInput = () => elements.search_input.value = ''; //clear input
 
 export const clearResult = () => elements.search_res_list.innerHTML = ''; //clear result list
 
-
+/**
+ * Function that splice title, if his length > 17
+ *
+ * @param {string} title
+ * @param {num} limit
+ */
 const limitRecipeTitle = (title, limit = 17) => {
     const newTitleArr = [];
     if (title.length > limit) {

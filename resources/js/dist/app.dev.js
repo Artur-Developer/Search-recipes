@@ -35,7 +35,7 @@ var searchController = function searchController() {
           query = searchView.getInput(); //TODO
 
           if (!query) {
-            _context.next = 8;
+            _context.next = 10;
             break;
           }
 
@@ -43,16 +43,18 @@ var searchController = function searchController() {
           state.search = new _Search["default"](query); //Prepare UI to render
 
           searchView.clearInput();
-          searchView.clearResult(); //Get a result
+          searchView.clearResult();
+          (0, _base.render_loader)(_base.elements.search_parent); //Get a result
 
-          _context.next = 7;
+          _context.next = 8;
           return regeneratorRuntime.awrap(state.search.getRecipe());
 
-        case 7:
-          //Render result
+        case 8:
+          (0, _base.clearLoader)(); //Render result
+
           searchView.render(state.search.result);
 
-        case 8:
+        case 10:
         case "end":
           return _context.stop();
       }
