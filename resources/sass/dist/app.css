@@ -697,3 +697,8 @@ svg {
   margin: 5rem auto;
   text-align: center;
 }
+
+.count_recipes, .error_search {
+  text-align: center;
+  margin: -13px 10px 15px;
+}

@@ -26,7 +26,7 @@ require('./bootstrap');
 var state = {};
 
 var searchController = function searchController() {
-  var query;
+  var query, resolve;
   return regeneratorRuntime.async(function searchController$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
@@ -35,7 +35,7 @@ var searchController = function searchController() {
           query = searchView.getInput(); //TODO
 
           if (!query) {
-            _context.next = 10;
+            _context.next = 15;
             break;
           }
 
@@ -44,17 +44,28 @@ var searchController = function searchController() {
 
           searchView.clearInput();
           searchView.clearResult();
+
+          searchView.clearCountRecipes();
           (0, _base.render_loader)(_base.elements.search_parent); //Get a result
 
-          _context.next = 8;
+          _context.next = 9;
           return regeneratorRuntime.awrap(state.search.getRecipe());
 
-        case 8:
+        case 9:
+          resolve = _context.sent;
+
+          if (!resolve) {
+            searchView.render_error(query);
+          }
+
           (0, _base.clearLoader)(); //Render result
 
+          searchView.count_recipes(state.search.result.length);
+          searchView.clearErrorMessage();
           searchView.render(state.search.result);
 
-        case 10:
+        case 15:
+
         case "end":
           return _context.stop();
       }
