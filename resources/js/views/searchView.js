@@ -6,6 +6,7 @@ export const clearInput = () => elements.search_input.value = ''; //clear input
 
 export const clearResult = () => elements.search_res_list.innerHTML = ''; //clear result list
 
+ 
 export const clearCountRecipes = () => {
     const count_rec = document.querySelector(`.${elementsString.count_recipe}`);
     if (count_rec) count_rec.parentNode.removeChild(count_rec);
@@ -15,7 +16,6 @@ export const clearErrorMessage = () => {
     const err_msg = document.querySelector(`.${elementsString.error_search}`);
     if (err_msg) err_msg.parentNode.removeChild(err_msg);
 };
-
 /**
  * Function that splice title, if his length > 17
  *

@@ -10,6 +10,7 @@ export const elementsString = {
     loader: 'custom_loader',
     count_recipe: 'count_recipes',
     error_search: 'error_search'
+
 };
 
 export const render_loader = parent => {

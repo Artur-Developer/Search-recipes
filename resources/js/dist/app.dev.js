@@ -44,6 +44,7 @@ var searchController = function searchController() {
 
           searchView.clearInput();
           searchView.clearResult();
+
           searchView.clearCountRecipes();
           (0, _base.render_loader)(_base.elements.search_parent); //Get a result
 
@@ -64,6 +65,7 @@ var searchController = function searchController() {
           searchView.render(state.search.result);
 
         case 15:
+
         case "end":
           return _context.stop();
       }

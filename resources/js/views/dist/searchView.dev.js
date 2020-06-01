@@ -25,6 +25,13 @@ var clearResult = function clearResult() {
   return _base.elements.search_res_list.innerHTML = '';
 }; //clear result list
 
+/**
+ * Function that splice title, if his length > 17
+ *
+ * @param {string} title
+ * @param {num} limit
+ */
+
 
 exports.clearResult = clearResult;
 

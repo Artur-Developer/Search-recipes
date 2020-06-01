@@ -11,6 +11,7 @@ var elements = {
   //input for search
   search_res_list: document.querySelector('.results__list'),
   //result list to render searched items
+
   search_parent: document.querySelector('.results'),
   //parent section for redner
   single_recipe: document.querySelector('.recipe') //section for render single recipe
@@ -21,6 +22,7 @@ var elementsString = {
   loader: 'custom_loader',
   count_recipe: 'count_recipes',
   error_search: 'error_search'
+
 };
 exports.elementsString = elementsString;
 

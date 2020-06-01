@@ -20073,6 +20073,7 @@ var searchController = /*#__PURE__*/function () {
 
             if (!query) {
               _context.next = 15;
+
               break;
             }
 
@@ -20081,6 +20082,7 @@ var searchController = /*#__PURE__*/function () {
 
             _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearInput"]();
             _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearResult"]();
+
             _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearCountRecipes"]();
             Object(_views_base__WEBPACK_IMPORTED_MODULE_3__["render_loader"])(_views_base__WEBPACK_IMPORTED_MODULE_3__["elements"].search_parent); //Get a result
 
@@ -20265,6 +20267,7 @@ var elementsString = {
   loader: 'custom_loader',
   count_recipe: 'count_recipes',
   error_search: 'error_search'
+
 };
 var render_loader = function render_loader(parent) {
   var template_loader = "\n            <div class=\"custom_loader\">\n                <svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n                    viewBox=\"0 0 100 100\" enable-background=\"new 0 0 100 100\" xml:space=\"preserve\">\n                    <rect fill=\"#FBDB89\" width=\"3\" height=\"100\" transform=\"translate(0) rotate(180 3 50)\">\n                    <animate\n                        attributeName=\"height\"\n                        attributeType=\"XML\"\n                        dur=\"1s\"\n                        values=\"30; 100; 30\"\n                        repeatCount=\"indefinite\"/>\n                    </rect>\n                    <rect x=\"17\" fill=\"#FBDB89\" width=\"3\" height=\"100\" transform=\"translate(0) rotate(180 20 50)\">\n                        <animate\n                            attributeName=\"height\"\n                            attributeType=\"XML\"\n                            dur=\"1s\"\n                            values=\"30; 100; 30\"\n                            repeatCount=\"indefinite\"\n                            begin=\"0.1s\"/>\n                    </rect>\n                    <rect x=\"40\" fill=\"#FBDB89\" width=\"3\" height=\"100\" transform=\"translate(0) rotate(180 40 50)\">\n                        <animate\n                            attributeName=\"height\"\n                            attributeType=\"XML\"\n                            dur=\"1s\"\n                            values=\"30; 100; 30\"\n                            repeatCount=\"indefinite\"\n                            begin=\"0.3s\"/>\n                    </rect>\n                    <rect x=\"60\" fill=\"#FBDB89\" width=\"3\" height=\"100\" transform=\"translate(0) rotate(180 58 50)\">\n                        <animate\n                            attributeName=\"height\"\n                            attributeType=\"XML\"\n                            dur=\"1s\"\n                            values=\"30; 100; 30\"\n                            repeatCount=\"indefinite\"\n                            begin=\"0.5s\"/>\n                    </rect>\n                    <rect x=\"80\" fill=\"#FBDB89\" width=\"3\" height=\"100\" transform=\"translate(0) rotate(180 76 50)\">\n                        <animate\n                            attributeName=\"height\"\n                            attributeType=\"XML\"\n                            dur=\"1s\"\n                            values=\"30; 100; 30\"\n                            repeatCount=\"indefinite\"\n                            begin=\"0.1s\"/>\n                    </rect>\n                </svg>\n            </div>";
@@ -20316,6 +20319,7 @@ var clearErrorMessage = function clearErrorMessage() {
   var err_msg = document.querySelector(".".concat(_base__WEBPACK_IMPORTED_MODULE_0__["elementsString"].error_search));
   if (err_msg) err_msg.parentNode.removeChild(err_msg);
 };
+
 /**
  * Function that splice title, if his length > 17
  *
