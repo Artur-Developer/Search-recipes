@@ -51,7 +51,15 @@
 
         {{-- here is preloader --}}
             <ul class="results__list">
-                <!--
+                {{-- <div class="count_recipes">
+                    <h1>Search results: <span>28</span> </h1>
+                </div>
+
+                <div class="error_search">
+                    <h1>Nothing search by: <span>search_value</span> </h1>
+                </div>--}}
+
+                {{--
                 <li>
                     <a class="results__link results__link--active" href="#23456">
                         <figure class="results__fig">
@@ -62,8 +70,8 @@
                             <p class="results__author">The Pioneer Woman</p>
                         </div>
                     </a>
-                </li>
-                -->
+                </li> --}}
+
             </ul>
 
             <div class="results__pages">
@@ -87,7 +95,6 @@
 
 
         <div class="recipe">
-
             <!--
             <figure class="recipe__fig">
                 <img src="img/test-1.jpg" alt="Tomato" class="recipe__img">

@@ -23,13 +23,20 @@ const searchController = async() => {
         //Prepare UI to render
         searchView.clearInput();
         searchView.clearResult();
+        searchView.clearCountRecipes();
+
         render_loader(elements.search_parent);
 
         //Get a result
-        await state.search.getRecipe();
+        const resolve = await state.search.getRecipe();
 
+        if (!resolve) {
+            searchView.render_error(query);
+        }
         clearLoader();
         //Render result
+        searchView.count_recipes(state.search.result.length);
+        searchView.clearErrorMessage();
         searchView.render(state.search.result);
     }
 };

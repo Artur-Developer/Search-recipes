@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.render = exports.clearResult = exports.clearInput = exports.getInput = void 0;
+exports.render = exports.render_error = exports.count_recipes = exports.clearErrorMessage = exports.clearCountRecipes = exports.clearResult = exports.clearInput = exports.getInput = void 0;
 
 var _base = require("./base");
 
@@ -25,6 +25,20 @@ var clearResult = function clearResult() {
   return _base.elements.search_res_list.innerHTML = '';
 }; //clear result list
 
+
+exports.clearResult = clearResult;
+
+var clearCountRecipes = function clearCountRecipes() {
+  var count_rec = document.querySelector(".".concat(_base.elementsString.count_recipe));
+  if (count_rec) count_rec.parentNode.removeChild(count_rec);
+};
+
+exports.clearCountRecipes = clearCountRecipes;
+
+var clearErrorMessage = function clearErrorMessage() {
+  var err_msg = document.querySelector(".".concat(_base.elementsString.error_search));
+  if (err_msg) err_msg.parentNode.removeChild(err_msg);
+};
 /**
  * Function that splice title, if his length > 17
  *
@@ -33,7 +47,7 @@ var clearResult = function clearResult() {
  */
 
 
-exports.clearResult = clearResult;
+exports.clearErrorMessage = clearErrorMessage;
 
 var limitRecipeTitle = function limitRecipeTitle(title) {
   var limit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 17;
@@ -63,12 +77,28 @@ var renderRecipe = function renderRecipe(recipe) {
 
   _base.elements.search_res_list.insertAdjacentHTML('beforeend', template_recipe);
 };
+
+var count_recipes = function count_recipes(num) {
+  var template_count_recipes = "\n        <div class=\"count_recipes\">\n            <h1>Search results: <span>".concat(num, "</span> </h1>\n        </div>");
+
+  _base.elements.search_parent.insertAdjacentHTML('afterbegin', template_count_recipes);
+};
+
+exports.count_recipes = count_recipes;
+
+var render_error = function render_error(val) {
+  var template_error = "\n    <div class=\"error_search\">\n        <h1>Nothing search by: <span>".concat(val, "</span> </h1>\n    </div>");
+
+  _base.elements.search_parent.insertAdjacentHTML('afterbegin', template_error);
+};
 /***
  *
  * Render all searched recipes
  *
  */
 
+
+exports.render_error = render_error;
 
 var render = function render(recipes) {
   recipes.forEach(renderRecipe);

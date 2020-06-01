@@ -47,7 +47,7 @@ function () {
             case 9:
               _context.prev = 9;
               _context.t0 = _context["catch"](2);
-              throw new Error(_context.t0);
+              console.log(_context.t0); //throw new Error(e);
 
             case 12:
             case "end":

@@ -2,11 +2,14 @@ export const elements = {
     search_form: document.querySelector('.search'), //search form
     search_input: document.querySelector('.search__field'), //input for search
     search_res_list: document.querySelector('.results__list'), //result list to render searched items
-    search_parent: document.querySelector('.results') //parent section for redner
+    search_parent: document.querySelector('.results'), //parent section for redner
+    single_recipe: document.querySelector('.recipe') //section for render single recipe
 };
 
 export const elementsString = {
-    loader: 'custom_loader'
+    loader: 'custom_loader',
+    count_recipe: 'count_recipes',
+    error_search: 'error_search'
 };
 
 export const render_loader = parent => {

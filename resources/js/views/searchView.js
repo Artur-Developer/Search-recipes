@@ -1,10 +1,20 @@
-import { elements } from './base';
+import { elements, elementsString } from './base';
 
 export const getInput = () => elements.search_input.value; //assign value from input
 
 export const clearInput = () => elements.search_input.value = ''; //clear input
 
 export const clearResult = () => elements.search_res_list.innerHTML = ''; //clear result list
+
+export const clearCountRecipes = () => {
+    const count_rec = document.querySelector(`.${elementsString.count_recipe}`);
+    if (count_rec) count_rec.parentNode.removeChild(count_rec);
+};
+
+export const clearErrorMessage = () => {
+    const err_msg = document.querySelector(`.${elementsString.error_search}`);
+    if (err_msg) err_msg.parentNode.removeChild(err_msg);
+};
 
 /**
  * Function that splice title, if his length > 17
@@ -46,6 +56,22 @@ const renderRecipe = recipe => {
         </li>
     `;
     elements.search_res_list.insertAdjacentHTML('beforeend', template_recipe);
+};
+
+export const count_recipes = num => {
+    const template_count_recipes = `
+        <div class="count_recipes">
+            <h1>Search results: <span>${num}</span> </h1>
+        </div>`;
+    elements.search_parent.insertAdjacentHTML('afterbegin', template_count_recipes);
+};
+
+export const render_error = val => {
+    const template_error = `
+    <div class="error_search">
+        <h1>Nothing search by: <span>${val}</span> </h1>
+    </div>`;
+    elements.search_parent.insertAdjacentHTML('afterbegin', template_error);
 };
 
 /***

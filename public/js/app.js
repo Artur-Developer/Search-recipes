@@ -20063,7 +20063,7 @@ var state = {};
 
 var searchController = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-    var query;
+    var query, resolve;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -20072,7 +20072,7 @@ var searchController = /*#__PURE__*/function () {
             query = _views_searchView__WEBPACK_IMPORTED_MODULE_2__["getInput"](); //TODO
 
             if (!query) {
-              _context.next = 10;
+              _context.next = 15;
               break;
             }
 
@@ -20081,17 +20081,26 @@ var searchController = /*#__PURE__*/function () {
 
             _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearInput"]();
             _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearResult"]();
+            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearCountRecipes"]();
             Object(_views_base__WEBPACK_IMPORTED_MODULE_3__["render_loader"])(_views_base__WEBPACK_IMPORTED_MODULE_3__["elements"].search_parent); //Get a result
 
-            _context.next = 8;
+            _context.next = 9;
             return state.search.getRecipe();
 
-          case 8:
+          case 9:
+            resolve = _context.sent;
+
+            if (!resolve) {
+              _views_searchView__WEBPACK_IMPORTED_MODULE_2__["render_error"](query);
+            }
+
             Object(_views_base__WEBPACK_IMPORTED_MODULE_3__["clearLoader"])(); //Render result
 
+            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["count_recipes"](state.search.result.length);
+            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearErrorMessage"]();
             _views_searchView__WEBPACK_IMPORTED_MODULE_2__["render"](state.search.result);
 
-          case 10:
+          case 15:
           case "end":
             return _context.stop();
         }
@@ -20202,7 +20211,7 @@ var Search = /*#__PURE__*/function () {
               case 9:
                 _context.prev = 9;
                 _context.t0 = _context["catch"](2);
-                throw new Error(_context.t0);
+                console.log(_context.t0); //throw new Error(e);
 
               case 12:
               case "end":
@@ -20247,11 +20256,15 @@ var elements = {
   //input for search
   search_res_list: document.querySelector('.results__list'),
   //result list to render searched items
-  search_parent: document.querySelector('.results') //parent section for redner
+  search_parent: document.querySelector('.results'),
+  //parent section for redner
+  single_recipe: document.querySelector('.recipe') //section for render single recipe
 
 };
 var elementsString = {
-  loader: 'custom_loader'
+  loader: 'custom_loader',
+  count_recipe: 'count_recipes',
+  error_search: 'error_search'
 };
 var render_loader = function render_loader(parent) {
   var template_loader = "\n            <div class=\"custom_loader\">\n                <svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n                    viewBox=\"0 0 100 100\" enable-background=\"new 0 0 100 100\" xml:space=\"preserve\">\n                    <rect fill=\"#FBDB89\" width=\"3\" height=\"100\" transform=\"translate(0) rotate(180 3 50)\">\n                    <animate\n                        attributeName=\"height\"\n                        attributeType=\"XML\"\n                        dur=\"1s\"\n                        values=\"30; 100; 30\"\n                        repeatCount=\"indefinite\"/>\n                    </rect>\n                    <rect x=\"17\" fill=\"#FBDB89\" width=\"3\" height=\"100\" transform=\"translate(0) rotate(180 20 50)\">\n                        <animate\n                            attributeName=\"height\"\n                            attributeType=\"XML\"\n                            dur=\"1s\"\n                            values=\"30; 100; 30\"\n                            repeatCount=\"indefinite\"\n                            begin=\"0.1s\"/>\n                    </rect>\n                    <rect x=\"40\" fill=\"#FBDB89\" width=\"3\" height=\"100\" transform=\"translate(0) rotate(180 40 50)\">\n                        <animate\n                            attributeName=\"height\"\n                            attributeType=\"XML\"\n                            dur=\"1s\"\n                            values=\"30; 100; 30\"\n                            repeatCount=\"indefinite\"\n                            begin=\"0.3s\"/>\n                    </rect>\n                    <rect x=\"60\" fill=\"#FBDB89\" width=\"3\" height=\"100\" transform=\"translate(0) rotate(180 58 50)\">\n                        <animate\n                            attributeName=\"height\"\n                            attributeType=\"XML\"\n                            dur=\"1s\"\n                            values=\"30; 100; 30\"\n                            repeatCount=\"indefinite\"\n                            begin=\"0.5s\"/>\n                    </rect>\n                    <rect x=\"80\" fill=\"#FBDB89\" width=\"3\" height=\"100\" transform=\"translate(0) rotate(180 76 50)\">\n                        <animate\n                            attributeName=\"height\"\n                            attributeType=\"XML\"\n                            dur=\"1s\"\n                            values=\"30; 100; 30\"\n                            repeatCount=\"indefinite\"\n                            begin=\"0.1s\"/>\n                    </rect>\n                </svg>\n            </div>";
@@ -20268,7 +20281,7 @@ var clearLoader = function clearLoader() {
 /*!******************************************!*\
   !*** ./resources/js/views/searchView.js ***!
   \******************************************/
-/*! exports provided: getInput, clearInput, clearResult, render */
+/*! exports provided: getInput, clearInput, clearResult, clearCountRecipes, clearErrorMessage, count_recipes, render_error, render */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20276,6 +20289,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getInput", function() { return getInput; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearInput", function() { return clearInput; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearResult", function() { return clearResult; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearCountRecipes", function() { return clearCountRecipes; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearErrorMessage", function() { return clearErrorMessage; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "count_recipes", function() { return count_recipes; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render_error", function() { return render_error; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base */ "./resources/js/views/base.js");
 
@@ -20291,6 +20308,14 @@ var clearResult = function clearResult() {
   return _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_res_list.innerHTML = '';
 }; //clear result list
 
+var clearCountRecipes = function clearCountRecipes() {
+  var count_rec = document.querySelector(".".concat(_base__WEBPACK_IMPORTED_MODULE_0__["elementsString"].count_recipe));
+  if (count_rec) count_rec.parentNode.removeChild(count_rec);
+};
+var clearErrorMessage = function clearErrorMessage() {
+  var err_msg = document.querySelector(".".concat(_base__WEBPACK_IMPORTED_MODULE_0__["elementsString"].error_search));
+  if (err_msg) err_msg.parentNode.removeChild(err_msg);
+};
 /**
  * Function that splice title, if his length > 17
  *
@@ -20325,12 +20350,20 @@ var renderRecipe = function renderRecipe(recipe) {
   var template_recipe = "<li>\n            <a class=\"results__link\" href=\"#".concat(recipe.recipe_id, "\">\n                <figure class=\"results__fig\">\n                    <img src=\"").concat(recipe.image_url, "\" alt=\"").concat(recipe.title, "\">\n                </figure>\n                <div class=\"results__data\">\n                    <h4 class=\"results__name\">").concat(limitRecipeTitle(recipe.title), "</h4>\n                    <p class=\"results__author\">").concat(recipe.publisher, "</p>\n                </div>\n            </a>\n        </li>\n    ");
   _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_res_list.insertAdjacentHTML('beforeend', template_recipe);
 };
+
+var count_recipes = function count_recipes(num) {
+  var template_count_recipes = "\n        <div class=\"count_recipes\">\n            <h1>Search results: <span>".concat(num, "</span> </h1>\n        </div>");
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_parent.insertAdjacentHTML('afterbegin', template_count_recipes);
+};
+var render_error = function render_error(val) {
+  var template_error = "\n    <div class=\"error_search\">\n        <h1>Nothing search by: <span>".concat(val, "</span> </h1>\n    </div>");
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_parent.insertAdjacentHTML('afterbegin', template_error);
+};
 /***
  *
  * Render all searched recipes
  *
  */
-
 
 var render = function render(recipes) {
   recipes.forEach(renderRecipe);
