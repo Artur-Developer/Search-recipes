@@ -9,7 +9,7 @@ use Illuminate\Support\Collection;
 use function collect;
 use function json_decode;
 
-class ForkifyProvider
+class ForkifyProvider implements ForkifyProviderContract
 {
     private Client$client;
 
