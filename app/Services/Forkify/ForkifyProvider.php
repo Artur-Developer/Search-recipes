@@ -4,7 +4,6 @@ namespace App\Services\Forkify;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
-
 use Illuminate\Support\Collection;
 
 use function collect;
@@ -24,7 +23,7 @@ class ForkifyProvider
     /** @see https://forkify-api.herokuapp.com
      * @param int $recipeId
      *
-     * @return array
+     * @return Collection
      */
     public function getRecipe(int $recipeId): Collection
     {
