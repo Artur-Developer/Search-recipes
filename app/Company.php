@@ -36,4 +36,9 @@ class Company extends Model
     {
         return $this->belongsTo(\CreateRefsSettingType::class, 'type_id', 'id');
     }
+
+    public function authors(): BelongsTo
+    {
+        return $this->belongsTo('App\Author');
+    }
 }

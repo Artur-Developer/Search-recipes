@@ -2,7 +2,21 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+
+/**
+ * Class Channel_Auth
+ * @package App
+ * @property int $id
+ * @property string $username
+ * @property string $password
+ * @property string $key
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ *
+ * @property Model|Channel $channels
+ */
 
 class Channel_Auth extends Model
 {

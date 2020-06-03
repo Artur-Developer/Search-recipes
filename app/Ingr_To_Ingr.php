@@ -2,7 +2,17 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+
+/**
+ * Class Ingr_To_Ingr
+ * @package App
+ * @property string $ingredient_to
+ * @property Carbon $created_at
+ *
+ * @property Model|Recipe $recipes
+ */
 
 class Ingr_To_Ingr extends Model
 {

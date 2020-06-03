@@ -4,6 +4,17 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * class Author
+ * @property int $id
+ * @property string $first_name
+ * @property string $last_name
+ * @property integer $born_date
+ *
+ * @property Model|Recipe $recipe
+ * @property Model|Img $images
+ * @property Model|Img $company
+ */
 class Author extends Model
 {
     protected $table = 'author';
