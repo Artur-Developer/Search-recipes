@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.render = exports.render_error = exports.count_recipes = exports.clearErrorMessage = exports.clearCountRecipes = exports.clearResult = exports.clearInput = exports.getInput = void 0;
+exports.render = exports.create_paginate = exports.render_error = exports.count_recipes = exports.clearErrorMessage = exports.clearCountRecipes = exports.clearResult = exports.clearInput = exports.getInput = void 0;
 
 var _base = require("./base");
 
@@ -22,7 +22,8 @@ var clearInput = function clearInput() {
 exports.clearInput = clearInput;
 
 var clearResult = function clearResult() {
-  return _base.elements.search_res_list.innerHTML = '';
+  _base.elements.search_res_list.innerHTML = '';
+  _base.elements.results_page.innerHTML = '';
 }; //clear result list
 
 
@@ -81,7 +82,7 @@ var renderRecipe = function renderRecipe(recipe) {
 var count_recipes = function count_recipes(num) {
   var template_count_recipes = "\n        <div class=\"count_recipes\">\n            <h1>Search results: <span>".concat(num, "</span> </h1>\n        </div>");
 
-  _base.elements.search_parent.insertAdjacentHTML('afterbegin', template_count_recipes);
+  _base.elements.search_parent.insertAdjacentHTML("afterbegin", template_count_recipes);
 };
 
 exports.count_recipes = count_recipes;
@@ -89,7 +90,28 @@ exports.count_recipes = count_recipes;
 var render_error = function render_error(val) {
   var template_error = "\n    <div class=\"error_search\">\n        <h1>Nothing search by: <span>".concat(val, "</span> </h1>\n    </div>");
 
-  _base.elements.search_parent.insertAdjacentHTML('afterbegin', template_error);
+  _base.elements.search_parent.insertAdjacentHTML("afterbegin", template_error);
+};
+
+exports.render_error = render_error;
+
+var template_paginate_button = function template_paginate_button(page, type) {
+  var template_button = "\n    <button class=\"btn-inline results__btn--".concat(type === 'prev' ? 'prev' : 'next', "\" data-goto=\"").concat(type === 'prev' ? page - 1 : page + 1, "\">\n        <i class=\"fa fa-").concat(type === 'prev' ? 'arrow-left' : 'arrow-right', "\"></i>\n        <span>Page ").concat(type === 'prev' ? page - 1 : page + 1, "</span>\n    </button>");
+
+  _base.elements.results_page.insertAdjacentHTML('afterbegin', template_button);
+};
+
+var create_paginate = function create_paginate(page, numOfResults, resPerPage) {
+  var pages = Math.ceil(numOfResults / resPerPage);
+  var button;
+
+  if (page === 1 && pages > 1) {
+    button = template_paginate_button(page, 'next');
+  } else if (page < pages) {
+    button = "".concat(template_paginate_button(page, 'prev'), "\n                ").concat(template_paginate_button(page, 'next'));
+  } else if (page === pages && pages > 1) {
+    button = template_paginate_button(page, 'prev');
+  }
 };
 /***
  *
@@ -98,10 +120,15 @@ var render_error = function render_error(val) {
  */
 
 
-exports.render_error = render_error;
+exports.create_paginate = create_paginate;
 
 var render = function render(recipes) {
-  recipes.forEach(renderRecipe);
+  var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+  var resPerPage = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 10;
+  var start = (page - 1) * resPerPage;
+  var end = page * resPerPage;
+  recipes.slice(start, end).forEach(renderRecipe);
+  create_paginate(page, recipes.length, resPerPage);
 };
 
 exports.render = render;

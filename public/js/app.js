@@ -20072,7 +20072,7 @@ var searchController = /*#__PURE__*/function () {
             query = _views_searchView__WEBPACK_IMPORTED_MODULE_2__["getInput"](); //TODO
 
             if (!query) {
-              _context.next = 15;
+              _context.next = 16;
               break;
             }
 
@@ -20082,12 +20082,13 @@ var searchController = /*#__PURE__*/function () {
             _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearInput"]();
             _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearResult"]();
             _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearCountRecipes"]();
+            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearErrorMessage"]();
             Object(_views_base__WEBPACK_IMPORTED_MODULE_3__["render_loader"])(_views_base__WEBPACK_IMPORTED_MODULE_3__["elements"].search_parent); //Get a result
 
-            _context.next = 9;
-            return state.search.getRecipe();
+            _context.next = 10;
+            return state.search.getResults();
 
-          case 9:
+          case 10:
             resolve = _context.sent;
 
             if (!resolve) {
@@ -20100,7 +20101,7 @@ var searchController = /*#__PURE__*/function () {
             _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearErrorMessage"]();
             _views_searchView__WEBPACK_IMPORTED_MODULE_2__["render"](state.search.result);
 
-          case 15:
+          case 16:
           case "end":
             return _context.stop();
         }
@@ -20116,6 +20117,15 @@ var searchController = /*#__PURE__*/function () {
 _views_base__WEBPACK_IMPORTED_MODULE_3__["elements"].search_form.addEventListener('submit', function (e) {
   e.preventDefault();
   searchController();
+});
+_views_base__WEBPACK_IMPORTED_MODULE_3__["elements"].results_page.addEventListener('click', function (e) {
+  var btn = e.target.closest('.btn-inline');
+
+  if (btn) {
+    var goToPage = parseInt(btn.dataset["goto"], 10);
+    _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearResult"]();
+    _views_searchView__WEBPACK_IMPORTED_MODULE_2__["render"](state.search.result, goToPage);
+  }
 });
 
 /***/ }),
@@ -20188,9 +20198,9 @@ var Search = /*#__PURE__*/function () {
   }
 
   _createClass(Search, [{
-    key: "getRecipe",
+    key: "getResults",
     value: function () {
-      var _getRecipe = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+      var _getResults = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
         var proxy, url, res;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
@@ -20221,11 +20231,11 @@ var Search = /*#__PURE__*/function () {
         }, _callee, this, [[2, 9]]);
       }));
 
-      function getRecipe() {
-        return _getRecipe.apply(this, arguments);
+      function getResults() {
+        return _getResults.apply(this, arguments);
       }
 
-      return getRecipe;
+      return getResults;
     }()
   }]);
 
@@ -20258,7 +20268,9 @@ var elements = {
   //result list to render searched items
   search_parent: document.querySelector('.results'),
   //parent section for redner
-  single_recipe: document.querySelector('.recipe') //section for render single recipe
+  single_recipe: document.querySelector('.recipe'),
+  //section for render single recipe
+  results_page: document.querySelector('.results__pages') // for paginate buttons
 
 };
 var elementsString = {
@@ -20281,7 +20293,7 @@ var clearLoader = function clearLoader() {
 /*!******************************************!*\
   !*** ./resources/js/views/searchView.js ***!
   \******************************************/
-/*! exports provided: getInput, clearInput, clearResult, clearCountRecipes, clearErrorMessage, count_recipes, render_error, render */
+/*! exports provided: getInput, clearInput, clearResult, clearCountRecipes, clearErrorMessage, count_recipes, render_error, create_paginate, render */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20293,6 +20305,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearErrorMessage", function() { return clearErrorMessage; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "count_recipes", function() { return count_recipes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render_error", function() { return render_error; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "create_paginate", function() { return create_paginate; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base */ "./resources/js/views/base.js");
 
@@ -20305,7 +20318,8 @@ var clearInput = function clearInput() {
 }; //clear input
 
 var clearResult = function clearResult() {
-  return _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_res_list.innerHTML = '';
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_res_list.innerHTML = '';
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].results_page.innerHTML = '';
 }; //clear result list
 
 var clearCountRecipes = function clearCountRecipes() {
@@ -20353,11 +20367,29 @@ var renderRecipe = function renderRecipe(recipe) {
 
 var count_recipes = function count_recipes(num) {
   var template_count_recipes = "\n        <div class=\"count_recipes\">\n            <h1>Search results: <span>".concat(num, "</span> </h1>\n        </div>");
-  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_parent.insertAdjacentHTML('afterbegin', template_count_recipes);
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_parent.insertAdjacentHTML("afterbegin", template_count_recipes);
 };
 var render_error = function render_error(val) {
   var template_error = "\n    <div class=\"error_search\">\n        <h1>Nothing search by: <span>".concat(val, "</span> </h1>\n    </div>");
-  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_parent.insertAdjacentHTML('afterbegin', template_error);
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_parent.insertAdjacentHTML("afterbegin", template_error);
+};
+
+var template_paginate_button = function template_paginate_button(page, type) {
+  var template_button = "\n    <button class=\"btn-inline results__btn--".concat(type === 'prev' ? 'prev' : 'next', "\" data-goto=\"").concat(type === 'prev' ? page - 1 : page + 1, "\">\n        <i class=\"fa fa-").concat(type === 'prev' ? 'arrow-left' : 'arrow-right', "\"></i>\n        <span>Page ").concat(type === 'prev' ? page - 1 : page + 1, "</span>\n    </button>");
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].results_page.insertAdjacentHTML('afterbegin', template_button);
+};
+
+var create_paginate = function create_paginate(page, numOfResults, resPerPage) {
+  var pages = Math.ceil(numOfResults / resPerPage);
+  var button;
+
+  if (page === 1 && pages > 1) {
+    button = template_paginate_button(page, 'next');
+  } else if (page < pages) {
+    button = "".concat(template_paginate_button(page, 'prev'), "\n                ").concat(template_paginate_button(page, 'next'));
+  } else if (page === pages && pages > 1) {
+    button = template_paginate_button(page, 'prev');
+  }
 };
 /***
  *
@@ -20366,7 +20398,12 @@ var render_error = function render_error(val) {
  */
 
 var render = function render(recipes) {
-  recipes.forEach(renderRecipe);
+  var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+  var resPerPage = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 10;
+  var start = (page - 1) * resPerPage;
+  var end = page * resPerPage;
+  recipes.slice(start, end).forEach(renderRecipe);
+  create_paginate(page, recipes.length, resPerPage);
 };
 
 /***/ }),

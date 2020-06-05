@@ -35,7 +35,7 @@ var searchController = function searchController() {
           query = searchView.getInput(); //TODO
 
           if (!query) {
-            _context.next = 15;
+            _context.next = 16;
             break;
           }
 
@@ -45,12 +45,13 @@ var searchController = function searchController() {
           searchView.clearInput();
           searchView.clearResult();
           searchView.clearCountRecipes();
+          searchView.clearErrorMessage();
           (0, _base.render_loader)(_base.elements.search_parent); //Get a result
 
-          _context.next = 9;
-          return regeneratorRuntime.awrap(state.search.getRecipe());
+          _context.next = 10;
+          return regeneratorRuntime.awrap(state.search.getResults());
 
-        case 9:
+        case 10:
           resolve = _context.sent;
 
           if (!resolve) {
@@ -63,7 +64,7 @@ var searchController = function searchController() {
           searchView.clearErrorMessage();
           searchView.render(state.search.result);
 
-        case 15:
+        case 16:
         case "end":
           return _context.stop();
       }
@@ -74,4 +75,14 @@ var searchController = function searchController() {
 _base.elements.search_form.addEventListener('submit', function (e) {
   e.preventDefault();
   searchController();
+});
+
+_base.elements.results_page.addEventListener('click', function (e) {
+  var btn = e.target.closest('.btn-inline');
+
+  if (btn) {
+    var goToPage = parseInt(btn.dataset["goto"], 10);
+    searchView.clearResult();
+    searchView.render(state.search.result, goToPage);
+  }
 });

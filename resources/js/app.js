@@ -24,16 +24,18 @@ const searchController = async() => {
         searchView.clearInput();
         searchView.clearResult();
         searchView.clearCountRecipes();
+        searchView.clearErrorMessage();
 
         render_loader(elements.search_parent);
 
         //Get a result
-        const resolve = await state.search.getRecipe();
+        const resolve = await state.search.getResults();
 
         if (!resolve) {
             searchView.render_error(query);
         }
         clearLoader();
+
         //Render result
         searchView.count_recipes(state.search.result.length);
         searchView.clearErrorMessage();
@@ -44,4 +46,13 @@ const searchController = async() => {
 elements.search_form.addEventListener('submit', e => {
     e.preventDefault();
     searchController();
+});
+
+elements.results_page.addEventListener('click', e => {
+    const btn = e.target.closest('.btn-inline');
+    if (btn) {
+        const goToPage = parseInt(btn.dataset.goto, 10);
+        searchView.clearResult();
+        searchView.render(state.search.result, goToPage);
+    }
 });

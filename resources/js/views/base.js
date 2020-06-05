@@ -3,7 +3,8 @@ export const elements = {
     search_input: document.querySelector('.search__field'), //input for search
     search_res_list: document.querySelector('.results__list'), //result list to render searched items
     search_parent: document.querySelector('.results'), //parent section for redner
-    single_recipe: document.querySelector('.recipe') //section for render single recipe
+    single_recipe: document.querySelector('.recipe'), //section for render single recipe
+    results_page: document.querySelector('.results__pages') // for paginate buttons
 };
 
 export const elementsString = {
