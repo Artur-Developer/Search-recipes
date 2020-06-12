@@ -1,5 +1,7 @@
 import Search from './models/Search';
+import Recipe from './models/Recipe';
 import * as searchView from './views/searchView';
+import * as recipeView from './views/recipeView';
 import { elements, render_loader, clearLoader } from './views/base';
 require('./bootstrap');
 
@@ -11,6 +13,9 @@ require('./bootstrap');
 */
 const state = {};
 
+/**
+ * Search controller
+ */
 const searchController = async() => {
 
     // Get query from input
@@ -48,6 +53,7 @@ elements.search_form.addEventListener('submit', e => {
     searchController();
 });
 
+//paginate
 elements.results_page.addEventListener('click', e => {
     const btn = e.target.closest('.btn-inline');
     if (btn) {
@@ -56,3 +62,30 @@ elements.results_page.addEventListener('click', e => {
         searchView.render(state.search.result, goToPage);
     }
 });
+
+const recipeController = async() => {
+    const id = window.location.hash.replace('#', '');
+
+    if (id) {
+
+        //prepare UI
+        recipeView.clear_recipe();
+        render_loader(elements.recipe);
+
+        state.recipe = new Recipe(id);
+
+        if (state.search) searchView.hightLightSelectedRecipe(id);
+
+        await state.recipe.getRecipe();
+        state.recipe.parseIngredients();
+
+        state.recipe.calcCookTime();
+        state.recipe.calcServings();
+
+        //render recipe
+        clearLoader();
+        recipeView.renderRecipe(state.recipe);
+    }
+};
+
+['hashchange', 'load'].forEach(event => window.addEventListener(event, recipeController));

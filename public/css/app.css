@@ -164,35 +164,19 @@ body {
 
 .btn-tiny {
   height: 1.75rem;
-  width: 1.75rem;
+  width: auto;
+  margin-bottom: 14px;
   border: none;
   background: none;
   cursor: pointer;
-}
-
-.btn-tiny svg {
-  height: 100%;
-  width: 100%;
-  fill: #F59A83;
-  transition: all 0.3s;
 }
 
 .btn-tiny:focus {
   outline: none;
 }
 
-.btn-tiny:hover svg {
-  fill: #F48982;
-  transform: translateY(-1px);
-}
-
-.btn-tiny:active svg {
-  fill: #F48982;
-  transform: translateY(0);
-}
-
-.btn-tiny:not(:last-child) {
-  margin-right: 0.3rem;
+.btn-tiny:nth-child(2) {
+  margin-left: 10px;
 }
 
 .heading-2 {
@@ -219,35 +203,6 @@ body {
 .loader {
   margin: 5rem auto;
   text-align: center;
-}
-
-.loader svg {
-  height: 5.5rem;
-  width: 5.5rem;
-  fill: #F59A83;
-  transform-origin: 44% 50%;
-  -webkit-animation: rotate 1.5s infinite linear;
-          animation: rotate 1.5s infinite linear;
-}
-
-@-webkit-keyframes rotate {
-  0% {
-    transform: rotate(0);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes rotate {
-  0% {
-    transform: rotate(0);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
 }
 
 .header {
@@ -315,6 +270,11 @@ body {
   position: relative;
   align-self: stretch;
   padding: 0 !important;
+  transition: all ease-in-out 0.25s;
+}
+
+.likes:hover {
+  background-color: #F2EFEE;
 }
 
 .likes__field {
@@ -333,10 +293,6 @@ body {
 
 .likes__field .fa {
   display: inline;
-}
-
-.likes__field:hover {
-  background-color: #F2EFEE;
 }
 
 .likes__panel:hover,
@@ -567,16 +523,8 @@ body {
 .recipe__info-buttons {
   display: flex;
   margin-left: 1.5rem;
-  visibility: hidden;
-  opacity: 0;
   transform: translateY(5px);
   transition: all 0.4s;
-}
-
-.recipe:hover .recipe__info-buttons {
-  visibility: visible;
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .recipe__love {
@@ -628,6 +576,12 @@ body {
 
 .recipe__item {
   display: flex;
+}
+
+.recipe__item i {
+  color: #F59A83;
+  font-size: 20px;
+  margin-right: 5px;
 }
 
 .recipe__icon {
@@ -755,5 +709,16 @@ svg {
 .error_search {
   text-align: center;
   margin: -13px 10px 15px;
+}
+
+.like_icon {
+  font-size: 23px;
+  color: #fff;
+}
+
+.recipe__info .fa {
+  color: #F59A83;
+  font-size: 20px;
+  margin-right: 7px;
 }
 

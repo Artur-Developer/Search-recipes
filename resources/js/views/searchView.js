@@ -8,7 +8,15 @@ export const clearResult = () => {
     elements.search_res_list.innerHTML = '';
     elements.results_page.innerHTML = '';
 };
-//clear result list
+
+export const hightLightSelectedRecipe = id => {
+    const arrLinks = Array.from(document.querySelectorAll('.results__link'));
+
+    arrLinks.forEach(el => {
+        el.classList.remove('results__link--active');
+    });
+    document.querySelector(`a[href*="${id}"]`).classList.add('results__link--active');
+};
 
 export const clearCountRecipes = () => {
     const count_rec = document.querySelector(`.${elementsString.count_recipe}`);
@@ -41,8 +49,7 @@ const limitRecipeTitle = (title, limit = 17) => {
 }
 
 /**
- *
- *  Method for prepare render recipes
+ * Method for prepare render recipes
  */
 const renderRecipe = recipe => {
 
@@ -105,10 +112,8 @@ export const create_paginate = (page, numOfResults, resPerPage) => {
 };
 
 
-/***
- *
+/**
  * Render all searched recipes
- *
  */
 export const render = (recipes, page = 1, resPerPage = 10) => {
     const start = (page - 1) * resPerPage;

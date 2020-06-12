@@ -134,30 +134,17 @@ body
 
 .btn-tiny
   height: 1.75rem
-  width: 1.75rem
+  width: auto
+  margin-bottom: 14px
   border: none
   background: none
   cursor: pointer
 
-  svg
-    height: 100%
-    width: 100%
-    fill: #F59A83
-    transition: all .3s
-
   &:focus
     outline: none
 
-  &:hover svg
-    fill: #F48982
-    transform: translateY(-1px)
-
-  &:active svg
-    fill: #F48982
-    transform: translateY(0)
-
-  &:not(:last-child)
-    margin-right: .3rem
+  &:nth-child(2)
+    margin-left: 10px
 
 .heading-2
   font-size: 1.8rem
@@ -180,20 +167,6 @@ body
 .loader
   margin: 5rem auto
   text-align: center
-
-  svg
-    height: 5.5rem
-    width: 5.5rem
-    fill: #F59A83
-    transform-origin: 44% 50%
-    animation: rotate 1.5s infinite linear
-
-@keyframes rotate
-  0%
-    transform: rotate(0)
-
-  100%
-    transform: rotate(360deg)
 
 .header
   grid-area: head
@@ -237,6 +210,9 @@ body
   position: relative
   align-self: stretch
   padding: 0 !important
+  transition: all ease-in-out .25s
+  &:hover
+      background-color: #F2EFEE
 
 .likes__field
   cursor: pointer
@@ -255,9 +231,6 @@ body
 
   .fa
     display: inline
-
-  &:hover
-    background-color: #F2EFEE
 
 .likes__panel:hover, .likes__field:hover + .likes__panel
   visibility: visible
@@ -441,15 +414,8 @@ body
 .recipe__info-buttons
   display: flex
   margin-left: 1.5rem
-  visibility: hidden
-  opacity: 0
   transform: translateY(5px)
   transition: all .4s
-
-.recipe:hover .recipe__info-buttons
-  visibility: visible
-  opacity: 1
-  transform: translateY(0)
 
 .recipe__love
   background-image: linear-gradient(to right bottom, #FBDB89, #F48982)
@@ -492,8 +458,13 @@ body
   list-style: none
   margin-bottom: 3rem
 
+
 .recipe__item
   display: flex
+  i
+      color: #F59A83
+      font-size: 20px
+      margin-right: 5px
 
 .recipe__icon
   height: 1.8rem
@@ -602,3 +573,13 @@ svg
 .count_recipes, .error_search
     text-align: center
     margin: -13px 10px 15px
+
+.like_icon
+    font-size: 23px
+    color: #fff
+
+.recipe__info
+    .fa
+       color: #F59A83
+       font-size: 20px
+       margin-right: 7px

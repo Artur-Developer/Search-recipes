@@ -68,8 +68,7 @@ var limitRecipeTitle = function limitRecipeTitle(title) {
   return title;
 };
 /**
- *
- *  Method for prepare render recipes
+ * Method for prepare render recipes
  */
 
 
@@ -113,10 +112,8 @@ var create_paginate = function create_paginate(page, numOfResults, resPerPage) {
     button = template_paginate_button(page, 'prev');
   }
 };
-/***
- *
+/**
  * Render all searched recipes
- *
  */
 
 

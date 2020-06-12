@@ -8,6 +8,7 @@
     },
     "dependencies": {
         "axios": "^0.19.2",
+        "fractional": "^1.0.0",
         "webpack": "^4.43.0"
     },
     "private": true,

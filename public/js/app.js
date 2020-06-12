@@ -2651,6 +2651,384 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/fractional/index.js":
+/*!******************************************!*\
+  !*** ./node_modules/fractional/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*
+fraction.js
+A Javascript fraction library.
+
+Copyright (c) 2009  Erik Garrison <erik@hypervolu.me>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+*/
+
+
+/* Fractions */
+/* 
+ *
+ * Fraction objects are comprised of a numerator and a denomenator.  These
+ * values can be accessed at fraction.numerator and fraction.denomenator.
+ *
+ * Fractions are always returned and stored in lowest-form normalized format.
+ * This is accomplished via Fraction.normalize.
+ *
+ * The following mathematical operations on fractions are supported:
+ *
+ * Fraction.equals
+ * Fraction.add
+ * Fraction.subtract
+ * Fraction.multiply
+ * Fraction.divide
+ *
+ * These operations accept both numbers and fraction objects.  (Best results
+ * are guaranteed when the input is a fraction object.)  They all return a new
+ * Fraction object.
+ *
+ * Usage:
+ *
+ * TODO
+ *
+ */
+
+/*
+ * The Fraction constructor takes one of:
+ *   an explicit numerator (integer) and denominator (integer),
+ *   a string representation of the fraction (string),
+ *   or a floating-point number (float)
+ *
+ * These initialization methods are provided for convenience.  Because of
+ * rounding issues the best results will be given when the fraction is
+ * constructed from an explicit integer numerator and denomenator, and not a
+ * decimal number.
+ *
+ *
+ * e.g. new Fraction(1, 2) --> 1/2
+ *      new Fraction('1/2') --> 1/2
+ *      new Fraction('2 3/4') --> 11/4  (prints as 2 3/4)
+ *
+ */
+Fraction = function(numerator, denominator)
+{
+    /* double argument invocation */
+    if (typeof numerator !== 'undefined' && denominator) {
+        if (typeof(numerator) === 'number' && typeof(denominator) === 'number') {
+            this.numerator = numerator;
+            this.denominator = denominator;
+        } else if (typeof(numerator) === 'string' && typeof(denominator) === 'string') {
+            // what are they?
+            // hmm....
+            // assume they are ints?
+            this.numerator = parseInt(numerator);
+            this.denominator = parseInt(denominator);
+        }
+    /* single-argument invocation */
+    } else if (typeof denominator === 'undefined') {
+        num = numerator; // swap variable names for legibility
+        if (typeof(num) === 'number') {  // just a straight number init
+            this.numerator = num;
+            this.denominator = 1;
+        } else if (typeof(num) === 'string') {
+            var a, b;  // hold the first and second part of the fraction, e.g. a = '1' and b = '2/3' in 1 2/3
+                       // or a = '2/3' and b = undefined if we are just passed a single-part number
+            var arr = num.split(' ')
+            if (arr[0]) a = arr[0]
+            if (arr[1]) b = arr[1]
+            /* compound fraction e.g. 'A B/C' */
+            //  if a is an integer ...
+            if (a % 1 === 0 && b && b.match('/')) {
+                return (new Fraction(a)).add(new Fraction(b));
+            } else if (a && !b) {
+                /* simple fraction e.g. 'A/B' */
+                if (typeof(a) === 'string' && a.match('/')) {
+                    // it's not a whole number... it's actually a fraction without a whole part written
+                    var f = a.split('/');
+                    this.numerator = f[0]; this.denominator = f[1];
+                /* string floating point */
+                } else if (typeof(a) === 'string' && a.match('\.')) {
+                    return new Fraction(parseFloat(a));
+                /* whole number e.g. 'A' */
+                } else { // just passed a whole number as a string
+                    this.numerator = parseInt(a);
+                    this.denominator = 1;
+                }
+            } else {
+                return undefined; // could not parse
+            }
+        }
+    }
+    this.normalize();
+}
+
+
+Fraction.prototype.clone = function()
+{
+    return new Fraction(this.numerator, this.denominator);
+}
+
+
+/* pretty-printer, converts fractions into whole numbers and fractions */
+Fraction.prototype.toString = function()
+{
+    if (this.denominator==='NaN') return 'NaN'
+    var wholepart = (this.numerator/this.denominator>0) ?
+      Math.floor(this.numerator / this.denominator) :
+      Math.ceil(this.numerator / this.denominator)
+    var numerator = this.numerator % this.denominator 
+    var denominator = this.denominator;
+    var result = []; 
+    if (wholepart != 0)  
+        result.push(wholepart);
+    if (numerator != 0)  
+        result.push(((wholepart===0) ? numerator : Math.abs(numerator)) + '/' + denominator);
+    return result.length > 0 ? result.join(' ') : 0;
+}
+
+
+/* destructively rescale the fraction by some integral factor */
+Fraction.prototype.rescale = function(factor)
+{
+    this.numerator *= factor;
+    this.denominator *= factor;
+    return this;
+}
+
+
+Fraction.prototype.add = function(b)
+{
+    var a = this.clone();
+    if (b instanceof Fraction) {
+        b = b.clone();
+    } else {
+        b = new Fraction(b);
+    }
+    td = a.denominator;
+    a.rescale(b.denominator);
+    b.rescale(td);
+
+    a.numerator += b.numerator;
+
+    return a.normalize();
+}
+
+
+Fraction.prototype.subtract = function(b)
+{
+    var a = this.clone();
+    if (b instanceof Fraction) {
+        b = b.clone();  // we scale our argument destructively, so clone
+    } else {
+        b = new Fraction(b);
+    }
+    td = a.denominator;
+    a.rescale(b.denominator);
+    b.rescale(td);
+
+    a.numerator -= b.numerator;
+
+    return a.normalize();
+}
+
+
+Fraction.prototype.multiply = function(b)
+{
+    var a = this.clone();
+    if (b instanceof Fraction)
+    {
+        a.numerator *= b.numerator;
+        a.denominator *= b.denominator;
+    } else if (typeof b === 'number') {
+        a.numerator *= b;
+    } else {
+        return a.multiply(new Fraction(b));
+    }
+    return a.normalize();
+}
+
+Fraction.prototype.divide = function(b)
+{
+    var a = this.clone();
+    if (b instanceof Fraction)
+    {
+        a.numerator *= b.denominator;
+        a.denominator *= b.numerator;
+    } else if (typeof b === 'number') {
+        a.denominator *= b;
+    } else {
+        return a.divide(new Fraction(b));
+    }
+    return a.normalize();
+}
+
+Fraction.prototype.equals = function(b)
+{
+    if (!(b instanceof Fraction)) {
+        b = new Fraction(b);
+    }
+    // fractions that are equal should have equal normalized forms
+    var a = this.clone().normalize();
+    var b = b.clone().normalize();
+    return (a.numerator === b.numerator && a.denominator === b.denominator);
+}
+
+
+/* Utility functions */
+
+/* Destructively normalize the fraction to its smallest representation. 
+ * e.g. 4/16 -> 1/4, 14/28 -> 1/2, etc.
+ * This is called after all math ops.
+ */
+Fraction.prototype.normalize = (function()
+{
+
+    var isFloat = function(n)
+    {
+        return (typeof(n) === 'number' && 
+                ((n > 0 && n % 1 > 0 && n % 1 < 1) || 
+                 (n < 0 && n % -1 < 0 && n % -1 > -1))
+               );
+    }
+
+    var roundToPlaces = function(n, places) 
+    {
+        if (!places) {
+            return Math.round(n);
+        } else {
+            var scalar = Math.pow(10, places);
+            return Math.round(n*scalar)/scalar;
+        }
+    }
+        
+    return (function() {
+
+        // XXX hackish.  Is there a better way to address this issue?
+        //
+        /* first check if we have decimals, and if we do eliminate them
+         * multiply by the 10 ^ number of decimal places in the number
+         * round the number to nine decimal places
+         * to avoid js floating point funnies
+         */
+        if (isFloat(this.denominator)) {
+            var rounded = roundToPlaces(this.denominator, 9);
+            var scaleup = Math.pow(10, rounded.toString().split('.')[1].length);
+            this.denominator = Math.round(this.denominator * scaleup); // this !!! should be a whole number
+            //this.numerator *= scaleup;
+            this.numerator *= scaleup;
+        } 
+        if (isFloat(this.numerator)) {
+            var rounded = roundToPlaces(this.numerator, 9);
+            var scaleup = Math.pow(10, rounded.toString().split('.')[1].length);
+            this.numerator = Math.round(this.numerator * scaleup); // this !!! should be a whole number
+            //this.numerator *= scaleup;
+            this.denominator *= scaleup;
+        }
+        var gcf = Fraction.gcf(this.numerator, this.denominator);
+        this.numerator /= gcf;
+        this.denominator /= gcf;
+        if ((this.numerator < 0 && this.denominator < 0) || (this.numerator > 0 && this.denominator < 0)) {
+            this.numerator *= -1;
+            this.denominator *= -1;
+        }
+        return this;
+    });
+
+})();
+
+
+/* Takes two numbers and returns their greatest common factor.
+ */
+Fraction.gcf = function(a, b)
+{
+
+    var common_factors = [];
+    var fa = Fraction.primeFactors(a);
+    var fb = Fraction.primeFactors(b);
+    // for each factor in fa
+    // if it's also in fb
+    // put it into the common factors
+    fa.forEach(function (factor) 
+    { 
+        var i = fb.indexOf(factor);
+        if (i >= 0) {
+            common_factors.push(factor);
+            fb.splice(i,1); // remove from fb
+        }
+    });
+
+    if (common_factors.length === 0)
+        return 1;
+
+    var gcf = (function() {
+        var r = common_factors[0];
+        var i;
+        for (i=1;i<common_factors.length;i++)
+        {
+            r = r * common_factors[i];
+        }
+        return r;
+    })();
+
+    return gcf;
+
+};
+
+
+// Adapted from: 
+// http://www.btinternet.com/~se16/js/factor.htm
+Fraction.primeFactors = function(n) 
+{
+
+    var num = Math.abs(n);
+    var factors = [];
+    var _factor = 2;  // first potential prime factor
+
+    while (_factor * _factor <= num)  // should we keep looking for factors?
+    {      
+      if (num % _factor === 0)  // this is a factor
+        { 
+            factors.push(_factor);  // so keep it
+            num = num/_factor;  // and divide our search point by it
+        }
+        else
+        {
+            _factor++;  // and increment
+        }
+    }
+
+    if (num != 1)                    // If there is anything left at the end...
+    {                                // ...this must be the last prime factor
+        factors.push(num);           //    so it too should be recorded
+    }
+
+    return factors;                  // Return the prime factors
+}
+
+module.exports.Fraction = Fraction
+
+
+/***/ }),
+
 /***/ "./node_modules/lodash/lodash.js":
 /*!***************************************!*\
   !*** ./node_modules/lodash/lodash.js ***!
@@ -20038,13 +20416,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _models_Search__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./models/Search */ "./resources/js/models/Search.js");
-/* harmony import */ var _views_searchView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./views/searchView */ "./resources/js/views/searchView.js");
-/* harmony import */ var _views_base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./views/base */ "./resources/js/views/base.js");
+/* harmony import */ var _models_Recipe__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./models/Recipe */ "./resources/js/models/Recipe.js");
+/* harmony import */ var _views_searchView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./views/searchView */ "./resources/js/views/searchView.js");
+/* harmony import */ var _views_recipeView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./views/recipeView */ "./resources/js/views/recipeView.js");
+/* harmony import */ var _views_base__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./views/base */ "./resources/js/views/base.js");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+
 
 
 
@@ -20060,6 +20442,9 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 
 var state = {};
+/**
+ * Search controller
+ */
 
 var searchController = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
@@ -20069,7 +20454,7 @@ var searchController = /*#__PURE__*/function () {
         switch (_context.prev = _context.next) {
           case 0:
             // Get query from input
-            query = _views_searchView__WEBPACK_IMPORTED_MODULE_2__["getInput"](); //TODO
+            query = _views_searchView__WEBPACK_IMPORTED_MODULE_3__["getInput"](); //TODO
 
             if (!query) {
               _context.next = 16;
@@ -20079,11 +20464,11 @@ var searchController = /*#__PURE__*/function () {
             // Save search model into state
             state.search = new _models_Search__WEBPACK_IMPORTED_MODULE_1__["default"](query); //Prepare UI to render
 
-            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearInput"]();
-            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearResult"]();
-            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearCountRecipes"]();
-            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearErrorMessage"]();
-            Object(_views_base__WEBPACK_IMPORTED_MODULE_3__["render_loader"])(_views_base__WEBPACK_IMPORTED_MODULE_3__["elements"].search_parent); //Get a result
+            _views_searchView__WEBPACK_IMPORTED_MODULE_3__["clearInput"]();
+            _views_searchView__WEBPACK_IMPORTED_MODULE_3__["clearResult"]();
+            _views_searchView__WEBPACK_IMPORTED_MODULE_3__["clearCountRecipes"]();
+            _views_searchView__WEBPACK_IMPORTED_MODULE_3__["clearErrorMessage"]();
+            Object(_views_base__WEBPACK_IMPORTED_MODULE_5__["render_loader"])(_views_base__WEBPACK_IMPORTED_MODULE_5__["elements"].search_parent); //Get a result
 
             _context.next = 10;
             return state.search.getResults();
@@ -20092,14 +20477,14 @@ var searchController = /*#__PURE__*/function () {
             resolve = _context.sent;
 
             if (!resolve) {
-              _views_searchView__WEBPACK_IMPORTED_MODULE_2__["render_error"](query);
+              _views_searchView__WEBPACK_IMPORTED_MODULE_3__["render_error"](query);
             }
 
-            Object(_views_base__WEBPACK_IMPORTED_MODULE_3__["clearLoader"])(); //Render result
+            Object(_views_base__WEBPACK_IMPORTED_MODULE_5__["clearLoader"])(); //Render result
 
-            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["count_recipes"](state.search.result.length);
-            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearErrorMessage"]();
-            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["render"](state.search.result);
+            _views_searchView__WEBPACK_IMPORTED_MODULE_3__["count_recipes"](state.search.result.length);
+            _views_searchView__WEBPACK_IMPORTED_MODULE_3__["clearErrorMessage"]();
+            _views_searchView__WEBPACK_IMPORTED_MODULE_3__["render"](state.search.result);
 
           case 16:
           case "end":
@@ -20114,18 +20499,66 @@ var searchController = /*#__PURE__*/function () {
   };
 }();
 
-_views_base__WEBPACK_IMPORTED_MODULE_3__["elements"].search_form.addEventListener('submit', function (e) {
+_views_base__WEBPACK_IMPORTED_MODULE_5__["elements"].search_form.addEventListener('submit', function (e) {
   e.preventDefault();
   searchController();
-});
-_views_base__WEBPACK_IMPORTED_MODULE_3__["elements"].results_page.addEventListener('click', function (e) {
+}); //paginate
+
+_views_base__WEBPACK_IMPORTED_MODULE_5__["elements"].results_page.addEventListener('click', function (e) {
   var btn = e.target.closest('.btn-inline');
 
   if (btn) {
     var goToPage = parseInt(btn.dataset["goto"], 10);
-    _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearResult"]();
-    _views_searchView__WEBPACK_IMPORTED_MODULE_2__["render"](state.search.result, goToPage);
+    _views_searchView__WEBPACK_IMPORTED_MODULE_3__["clearResult"]();
+    _views_searchView__WEBPACK_IMPORTED_MODULE_3__["render"](state.search.result, goToPage);
   }
+});
+
+var recipeController = /*#__PURE__*/function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+    var id;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            id = window.location.hash.replace('#', '');
+
+            if (!id) {
+              _context2.next = 13;
+              break;
+            }
+
+            //prepare UI
+            _views_recipeView__WEBPACK_IMPORTED_MODULE_4__["clear_recipe"]();
+            Object(_views_base__WEBPACK_IMPORTED_MODULE_5__["render_loader"])(_views_base__WEBPACK_IMPORTED_MODULE_5__["elements"].recipe);
+            state.recipe = new _models_Recipe__WEBPACK_IMPORTED_MODULE_2__["default"](id);
+            if (state.search) _views_searchView__WEBPACK_IMPORTED_MODULE_3__["hightLightSelectedRecipe"](id);
+            _context2.next = 8;
+            return state.recipe.getRecipe();
+
+          case 8:
+            state.recipe.parseIngredients();
+            state.recipe.calcCookTime();
+            state.recipe.calcServings(); //render recipe
+
+            Object(_views_base__WEBPACK_IMPORTED_MODULE_5__["clearLoader"])();
+            _views_recipeView__WEBPACK_IMPORTED_MODULE_4__["renderRecipe"](state.recipe);
+
+          case 13:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+
+  return function recipeController() {
+    return _ref2.apply(this, arguments);
+  };
+}();
+
+['hashchange', 'load'].forEach(function (event) {
+  return window.addEventListener(event, recipeController);
 });
 
 /***/ }),
@@ -20159,6 +20592,162 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     forceTLS: true
 // });
+
+/***/ }),
+
+/***/ "./resources/js/models/Recipe.js":
+/*!***************************************!*\
+  !*** ./resources/js/models/Recipe.js ***!
+  \***************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Recipe; });
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+var Recipe = /*#__PURE__*/function () {
+  function Recipe(id) {
+    _classCallCheck(this, Recipe);
+
+    this.id = id;
+  }
+
+  _createClass(Recipe, [{
+    key: "getRecipe",
+    value: function () {
+      var _getRecipe = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var proxy, url, res;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.prev = 0;
+                proxy = 'https://cors-anywhere.herokuapp.com/';
+                url = "".concat(proxy, "https://forkify-api.herokuapp.com/api/get?rId=").concat(this.id);
+                _context.next = 5;
+                return axios__WEBPACK_IMPORTED_MODULE_1___default()("".concat(url));
+
+              case 5:
+                res = _context.sent;
+                this.title = res.data.recipe.title;
+                this.img = res.data.recipe.image_url;
+                this.ingredients = res.data.recipe.ingredients;
+                this.publisher = res.data.recipe.publisher;
+                this.publisher_url = res.data.recipe.publisher_url;
+                this.rank = res.data.recipe.social_rank;
+                console.log(res);
+                _context.next = 18;
+                break;
+
+              case 15:
+                _context.prev = 15;
+                _context.t0 = _context["catch"](0);
+                console.log(_context.t0);
+
+              case 18:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this, [[0, 15]]);
+      }));
+
+      function getRecipe() {
+        return _getRecipe.apply(this, arguments);
+      }
+
+      return getRecipe;
+    }()
+  }, {
+    key: "calcCookTime",
+    value: function calcCookTime() {
+      var numOfIngredients = this.ingredients.length;
+      var periods = Math.ceil(numOfIngredients / 3);
+      this.time = periods * 15;
+    }
+  }, {
+    key: "calcServings",
+    value: function calcServings() {
+      this.servings = 4;
+    }
+  }, {
+    key: "parseIngredients",
+    value: function parseIngredients() {
+      var unitLong = ['tablespoons', 'tablespoon', 'ounce', 'ounces', 'teaspoon', 'teaspoons', 'cups', 'pounds'];
+      var unitShort = ['tbsp', 'tbsp', 'oz', 'oz', 'tsp', 'tsp', 'cup', 'pound'];
+      var units = [].concat(unitShort, ['kg', 'g']);
+      var newIngredients = this.ingredients.map(function (el) {
+        var ingredient = el.toLowerCase();
+        unitLong.forEach(function (unit, index) {
+          ingredient = ingredient.replace(unit, unitShort[index]);
+        }); //rm parenthese (etc, '()')
+
+        ingredient = ingredient.replace(/ *\([^)]*\) */g, ' '); //Parse ingredients into count, unit and ingredient
+
+        var arrIng = ingredient.split(' ');
+        var unitIndex = arrIng.findIndex(function (element) {
+          return units.includes(element);
+        });
+        var objIng;
+
+        if (unitIndex > -1) {
+          var arrCount = arrIng.slice(0, unitIndex);
+          var count;
+
+          if (arrCount.length === 1) {
+            count = eval(arrIng[0].replace('-', '+'));
+          } else {
+            count = eval(arrIng.slice(0, unitIndex).join('+'));
+          }
+
+          objIng = {
+            count: count,
+            unit: arrIng[unitIndex],
+            ingredient: arrIng.slice(unitIndex + 1).join(' ')
+          };
+        } else if (parseInt(arrIng[0], 10)) {
+          objIng = {
+            count: parseInt(arrIng[0], 10),
+            unit: '',
+            ingredient: arrIng.slice(1).join(' ')
+          };
+        } else if (unitIndex === -1) {
+          objIng = {
+            count: 1,
+            unit: '',
+            ingredient: ingredient
+          };
+        }
+
+        return objIng;
+      });
+      this.ingredients = newIngredients;
+    }
+  }]);
+
+  return Recipe;
+}();
+
+
+;
 
 /***/ }),
 
@@ -20270,7 +20859,9 @@ var elements = {
   //parent section for redner
   single_recipe: document.querySelector('.recipe'),
   //section for render single recipe
-  results_page: document.querySelector('.results__pages') // for paginate buttons
+  results_page: document.querySelector('.results__pages'),
+  // for paginate buttons
+  recipe: document.querySelector('.recipe') //recipe sections
 
 };
 var elementsString = {
@@ -20289,11 +20880,80 @@ var clearLoader = function clearLoader() {
 
 /***/ }),
 
+/***/ "./resources/js/views/recipeView.js":
+/*!******************************************!*\
+  !*** ./resources/js/views/recipeView.js ***!
+  \******************************************/
+/*! exports provided: clear_recipe, renderRecipe */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear_recipe", function() { return clear_recipe; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "renderRecipe", function() { return renderRecipe; });
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base */ "./resources/js/views/base.js");
+/* harmony import */ var fractional__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! fractional */ "./node_modules/fractional/index.js");
+/* harmony import */ var fractional__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(fractional__WEBPACK_IMPORTED_MODULE_1__);
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
+
+var clear_recipe = function clear_recipe() {
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].recipe.innerHTML = '';
+};
+
+var formatCount = function formatCount(count) {
+  if (count) {
+    var _count$toString$split = count.toString().split('.').map(function (el) {
+      return parseInt(el, 10);
+    }),
+        _count$toString$split2 = _slicedToArray(_count$toString$split, 2),
+        _int = _count$toString$split2[0],
+        dec = _count$toString$split2[1];
+
+    if (!dec) return count;
+
+    if (_int === 0) {
+      var fr = new fractional__WEBPACK_IMPORTED_MODULE_1__["Fraction"](count);
+      return "".concat(fr.numerator, "/").concat(fr.denominator);
+    } else {
+      var _fr = new fractional__WEBPACK_IMPORTED_MODULE_1__["Fraction"](count - _int);
+
+      return "".concat(_int, " ").concat(_fr.numerator, "/").concat(_fr.denominator);
+    }
+  }
+
+  return '?';
+};
+
+var create_ingredients = function create_ingredients(ingredient) {
+  return "\n    <li class=\"recipe__item\">\n        <i class=\"fas fa-check-circle\"></i>\n        <div class=\"recipe__count\">".concat(formatCount(ingredient.count), "</div>\n        <div class=\"recipe__ingredient\">\n            <span class=\"recipe__unit\">").concat(ingredient.unit, "</span>\n            ").concat(ingredient.ingredient, "\n        </div>\n    </li>");
+};
+
+var renderRecipe = function renderRecipe(recipe) {
+  var template_recipe = "\n            <figure class=\"recipe__fig\">\n                <img src=\"".concat(recipe.img, "\" alt=\"").concat(recipe.title, "}\" class=\"recipe__img\">\n                <h1 class=\"recipe__title\">\n                    <span>").concat(recipe.title, "</span>\n                </h1>\n            </figure>\n            <div class=\"recipe__details\">\n                <div class=\"recipe__info\">\n                    <i class=\"fa fa-clock\"></i>\n                    <span class=\"recipe__info-data recipe__info-data--minutes\">").concat(recipe.time, "</span>\n                    <span class=\"recipe__info-text\"> minutes</span>\n                </div>\n                <div class=\"recipe__info\">\n\n                    <i class=\"fa fa-utensils\"></i>\n                    <span class=\"recipe__info-data recipe__info-data--people\">").concat(recipe.servings, "</span>\n                    <span class=\"recipe__info-text\"> servings</span>\n\n                    <div class=\"recipe__info-buttons\">\n                        <button class=\"btn-tiny\">\n                            <i class=\"fa fa-minus-circle\"></i>\n                        </button>\n                        <button class=\"btn-tiny\">\n                            <i class=\"fa fa-plus-circle\"></i>\n                        </button>\n                    </div>\n\n                </div>\n                <button class=\"recipe__love\">\n                    <i class=\"like_icon far fa-heart\"></i>\n                </button>\n            </div>\n\n            <div class=\"recipe__ingredients\">\n                <ul class=\"recipe__ingredient-list\">\n                    ").concat(recipe.ingredients.map(function (el) {
+    return create_ingredients(el);
+  }).join(''), "\n                </ul>\n\n                <button class=\"btn-small recipe__btn\">\n                    <i class=\"fa fa-shopping-cart\"></i>\n                    <span>Add to shopping list</span>\n                </button>\n            </div>\n\n            <div class=\"recipe__directions\">\n                <h2 class=\"heading-2\">How to cook it</h2>\n                <p class=\"recipe__directions-text\">\n                    This recipe was carefully designed and tested by\n                    <span class=\"recipe__by\">").concat(recipe.publisher, "</span>. Please check out directions at their website.\n                </p>\n                <a class=\"btn-small recipe__btn\" href=\"").concat(recipe.publisher_url, "}\" target=\"_blank\">\n                    <span>Directions</span>\n                    <i class=\"fa fa-caret-right\"></i>\n                </a>\n            </div>");
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].recipe.insertAdjacentHTML('afterbegin', template_recipe);
+};
+
+/***/ }),
+
 /***/ "./resources/js/views/searchView.js":
 /*!******************************************!*\
   !*** ./resources/js/views/searchView.js ***!
   \******************************************/
-/*! exports provided: getInput, clearInput, clearResult, clearCountRecipes, clearErrorMessage, count_recipes, render_error, create_paginate, render */
+/*! exports provided: getInput, clearInput, clearResult, hightLightSelectedRecipe, clearCountRecipes, clearErrorMessage, count_recipes, render_error, create_paginate, render */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20301,6 +20961,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getInput", function() { return getInput; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearInput", function() { return clearInput; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearResult", function() { return clearResult; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hightLightSelectedRecipe", function() { return hightLightSelectedRecipe; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearCountRecipes", function() { return clearCountRecipes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearErrorMessage", function() { return clearErrorMessage; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "count_recipes", function() { return count_recipes; });
@@ -20320,8 +20981,14 @@ var clearInput = function clearInput() {
 var clearResult = function clearResult() {
   _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_res_list.innerHTML = '';
   _base__WEBPACK_IMPORTED_MODULE_0__["elements"].results_page.innerHTML = '';
-}; //clear result list
-
+};
+var hightLightSelectedRecipe = function hightLightSelectedRecipe(id) {
+  var arrLinks = Array.from(document.querySelectorAll('.results__link'));
+  arrLinks.forEach(function (el) {
+    el.classList.remove('results__link--active');
+  });
+  document.querySelector("a[href*=\"".concat(id, "\"]")).classList.add('results__link--active');
+};
 var clearCountRecipes = function clearCountRecipes() {
   var count_rec = document.querySelector(".".concat(_base__WEBPACK_IMPORTED_MODULE_0__["elementsString"].count_recipe));
   if (count_rec) count_rec.parentNode.removeChild(count_rec);
@@ -20355,8 +21022,7 @@ var limitRecipeTitle = function limitRecipeTitle(title) {
   return title;
 };
 /**
- *
- *  Method for prepare render recipes
+ * Method for prepare render recipes
  */
 
 
@@ -20391,10 +21057,8 @@ var create_paginate = function create_paginate(page, numOfResults, resPerPage) {
     button = template_paginate_button(page, 'prev');
   }
 };
-/***
- *
+/**
  * Render all searched recipes
- *
  */
 
 var render = function render(recipes) {

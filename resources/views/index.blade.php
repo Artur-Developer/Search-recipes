@@ -15,7 +15,9 @@
 <body>
     <div class="container">
         <header class="header">
-            <img src="img/logo.png" alt="Logo" class="header__logo">
+            <a href="{{ route('home') }}">
+                <img src="img/logo.png" alt="Logo" class="header__logo">
+            </a>
             <form class="search">
                 <input type="text" class="search__field" placeholder="Search over 1,000,000 recipes...">
                 <button class="btn search__btn">
@@ -28,8 +30,8 @@
                     <i class="fa fa-3x fa-heart"></i>
                 </div>
                 <div class="likes__panel">
+                    <!--
                     <ul class="likes__list">
-                        <!--
                         <li>
                             <a class="likes__link" href="#23456">
                                 <figure class="likes__fig">
@@ -41,23 +43,14 @@
                                 </div>
                             </a>
                         </li>
-                        -->
                     </ul>
+                -->
                 </div>
             </div>
         </header>
 
         <div class="results">
-
-        {{-- here is preloader --}}
             <ul class="results__list">
-                {{-- <div class="count_recipes">
-                    <h1>Search results: <span>28</span> </h1>
-                </div>
-
-                <div class="error_search">
-                    <h1>Nothing search by: <span>search_value</span> </h1>
-                </div>--}}
 
                 {{--
                 <li>
@@ -91,8 +84,6 @@
                 -->
             </div>
         </div>
-
-
 
         <div class="recipe">
             <!--
@@ -137,8 +128,6 @@
                     </svg>
                 </button>
             </div>
-
-
 
             <div class="recipe__ingredients">
                 <ul class="recipe__ingredient-list">
