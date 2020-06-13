@@ -164,7 +164,6 @@ body {
 
 .btn-tiny {
   height: 1.75rem;
-  width: auto;
   margin-bottom: 14px;
   border: none;
   background: none;
@@ -173,10 +172,6 @@ body {
 
 .btn-tiny:focus {
   outline: none;
-}
-
-.btn-tiny:nth-child(2) {
-  margin-left: 10px;
 }
 
 .heading-2 {

@@ -20560,6 +20560,19 @@ var recipeController = /*#__PURE__*/function () {
 ['hashchange', 'load'].forEach(function (event) {
   return window.addEventListener(event, recipeController);
 });
+_views_base__WEBPACK_IMPORTED_MODULE_5__["elements"].recipe.addEventListener('click', function (e) {
+  if (e.target.matches('.btn-decrease *')) {
+    if (state.recipe.servings > 1) {
+      state.recipe.updateServings('dec');
+      _views_recipeView__WEBPACK_IMPORTED_MODULE_4__["update_servings_ingredients"](state.recipe);
+    }
+  } else if (e.target.matches('.btn-increase, .btn-increase *')) {
+    state.recipe.updateServings('inc');
+    _views_recipeView__WEBPACK_IMPORTED_MODULE_4__["update_servings_ingredients"](state.recipe);
+  }
+
+  console.log(state.recipe);
+});
 
 /***/ }),
 
@@ -20686,22 +20699,20 @@ var Recipe = /*#__PURE__*/function () {
   }, {
     key: "calcServings",
     value: function calcServings() {
-      this.servings = 4;
+      this.servings = 1;
     }
   }, {
     key: "parseIngredients",
     value: function parseIngredients() {
-      var unitLong = ['tablespoons', 'tablespoon', 'ounce', 'ounces', 'teaspoon', 'teaspoons', 'cups', 'pounds'];
-      var unitShort = ['tbsp', 'tbsp', 'oz', 'oz', 'tsp', 'tsp', 'cup', 'pound'];
-      var units = [].concat(unitShort, ['kg', 'g']);
+      var unitsLong = ['tablespoons', 'tablespoon', 'ounces', 'ounce', 'teaspoons', 'teaspoon', 'cups', 'pounds'];
+      var unitsShort = ['tbsp', 'tbsp', 'oz', 'oz', 'tsp', 'tsp', 'cup', 'pound'];
+      var units = [].concat(unitsShort, ['kg', 'g']);
       var newIngredients = this.ingredients.map(function (el) {
         var ingredient = el.toLowerCase();
-        unitLong.forEach(function (unit, index) {
-          ingredient = ingredient.replace(unit, unitShort[index]);
-        }); //rm parenthese (etc, '()')
-
-        ingredient = ingredient.replace(/ *\([^)]*\) */g, ' '); //Parse ingredients into count, unit and ingredient
-
+        unitsLong.forEach(function (unit, index) {
+          ingredient = ingredient.replace(unit, unitsShort[index]);
+        });
+        ingredient = ingredient.replace(/ *\([^)]*\) */g, ' ');
         var arrIng = ingredient.split(' ');
         var unitIndex = arrIng.findIndex(function (element) {
           return units.includes(element);
@@ -20724,12 +20735,14 @@ var Recipe = /*#__PURE__*/function () {
             ingredient: arrIng.slice(unitIndex + 1).join(' ')
           };
         } else if (parseInt(arrIng[0], 10)) {
+          // There is NO unit, but 1st element is number
           objIng = {
             count: parseInt(arrIng[0], 10),
             unit: '',
             ingredient: arrIng.slice(1).join(' ')
           };
         } else if (unitIndex === -1) {
+          // There is NO unit and NO number in 1st position
           objIng = {
             count: 1,
             unit: '',
@@ -20740,6 +20753,19 @@ var Recipe = /*#__PURE__*/function () {
         return objIng;
       });
       this.ingredients = newIngredients;
+    }
+  }, {
+    key: "updateServings",
+    value: function updateServings(type) {
+      var _this = this;
+
+      //servings
+      var newServings = type === 'dec' ? this.servings - 1 : this.servings + 1; //ingredients
+
+      this.ingredients.forEach(function (ing) {
+        ing.count *= newServings / _this.servings;
+      });
+      this.servings = newServings;
     }
   }]);
 
@@ -20810,7 +20836,7 @@ var Search = /*#__PURE__*/function () {
               case 9:
                 _context.prev = 9;
                 _context.t0 = _context["catch"](2);
-                console.log(_context.t0); //throw new Error(e);
+                console.log(_context.t0);
 
               case 12:
               case "end":
@@ -20884,13 +20910,14 @@ var clearLoader = function clearLoader() {
 /*!******************************************!*\
   !*** ./resources/js/views/recipeView.js ***!
   \******************************************/
-/*! exports provided: clear_recipe, renderRecipe */
+/*! exports provided: clear_recipe, renderRecipe, update_servings_ingredients */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear_recipe", function() { return clear_recipe; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "renderRecipe", function() { return renderRecipe; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "update_servings_ingredients", function() { return update_servings_ingredients; });
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base */ "./resources/js/views/base.js");
 /* harmony import */ var fractional__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! fractional */ "./node_modules/fractional/index.js");
 /* harmony import */ var fractional__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(fractional__WEBPACK_IMPORTED_MODULE_1__);
@@ -20941,10 +20968,17 @@ var create_ingredients = function create_ingredients(ingredient) {
 };
 
 var renderRecipe = function renderRecipe(recipe) {
-  var template_recipe = "\n            <figure class=\"recipe__fig\">\n                <img src=\"".concat(recipe.img, "\" alt=\"").concat(recipe.title, "}\" class=\"recipe__img\">\n                <h1 class=\"recipe__title\">\n                    <span>").concat(recipe.title, "</span>\n                </h1>\n            </figure>\n            <div class=\"recipe__details\">\n                <div class=\"recipe__info\">\n                    <i class=\"fa fa-clock\"></i>\n                    <span class=\"recipe__info-data recipe__info-data--minutes\">").concat(recipe.time, "</span>\n                    <span class=\"recipe__info-text\"> minutes</span>\n                </div>\n                <div class=\"recipe__info\">\n\n                    <i class=\"fa fa-utensils\"></i>\n                    <span class=\"recipe__info-data recipe__info-data--people\">").concat(recipe.servings, "</span>\n                    <span class=\"recipe__info-text\"> servings</span>\n\n                    <div class=\"recipe__info-buttons\">\n                        <button class=\"btn-tiny\">\n                            <i class=\"fa fa-minus-circle\"></i>\n                        </button>\n                        <button class=\"btn-tiny\">\n                            <i class=\"fa fa-plus-circle\"></i>\n                        </button>\n                    </div>\n\n                </div>\n                <button class=\"recipe__love\">\n                    <i class=\"like_icon far fa-heart\"></i>\n                </button>\n            </div>\n\n            <div class=\"recipe__ingredients\">\n                <ul class=\"recipe__ingredient-list\">\n                    ").concat(recipe.ingredients.map(function (el) {
+  var template_recipe = "\n            <figure class=\"recipe__fig\">\n                <img src=\"".concat(recipe.img, "\" alt=\"").concat(recipe.title, "}\" class=\"recipe__img\">\n                <h1 class=\"recipe__title\">\n                    <span>").concat(recipe.title, "</span>\n                </h1>\n            </figure>\n            <div class=\"recipe__details\">\n                <div class=\"recipe__info\">\n                    <i class=\"fa fa-clock\"></i>\n                    <span class=\"recipe__info-data recipe__info-data--minutes\">").concat(recipe.time, "</span>\n                    <span class=\"recipe__info-text\"> minutes</span>\n                </div>\n                <div class=\"recipe__info\">\n\n                    <i class=\"fa fa-utensils\"></i>\n                    <span class=\"recipe__info-data recipe__info-data--people\">").concat(recipe.servings, "</span>\n                    <span class=\"recipe__info-text\"> servings</span>\n\n                    <div class=\"recipe__info-buttons\">\n                        <button class=\"btn-tiny btn-decrease\">\n                            <i class=\"fa fa-minus-circle\"></i>\n                        </button>\n                        <button class=\"btn-tiny btn-increase\">\n                            <i class=\"fa fa-plus-circle\"></i>\n                        </button>\n                    </div>\n\n                </div>\n                <button class=\"recipe__love\">\n                    <i class=\"like_icon far fa-heart\"></i>\n                </button>\n            </div>\n\n            <div class=\"recipe__ingredients\">\n                <ul class=\"recipe__ingredient-list\">\n                    ").concat(recipe.ingredients.map(function (el) {
     return create_ingredients(el);
   }).join(''), "\n                </ul>\n\n                <button class=\"btn-small recipe__btn\">\n                    <i class=\"fa fa-shopping-cart\"></i>\n                    <span>Add to shopping list</span>\n                </button>\n            </div>\n\n            <div class=\"recipe__directions\">\n                <h2 class=\"heading-2\">How to cook it</h2>\n                <p class=\"recipe__directions-text\">\n                    This recipe was carefully designed and tested by\n                    <span class=\"recipe__by\">").concat(recipe.publisher, "</span>. Please check out directions at their website.\n                </p>\n                <a class=\"btn-small recipe__btn\" href=\"").concat(recipe.publisher_url, "}\" target=\"_blank\">\n                    <span>Directions</span>\n                    <i class=\"fa fa-caret-right\"></i>\n                </a>\n            </div>");
   _base__WEBPACK_IMPORTED_MODULE_0__["elements"].recipe.insertAdjacentHTML('afterbegin', template_recipe);
+};
+var update_servings_ingredients = function update_servings_ingredients(recipe) {
+  document.querySelector('.recipe__info-data--people').textContent = recipe.servings;
+  var countElements = Array.from(document.querySelectorAll('.recipe__count'));
+  countElements.forEach(function (el, i) {
+    el.textContent = formatCount(recipe.ingredients[i].count);
+  });
 };
 
 /***/ }),

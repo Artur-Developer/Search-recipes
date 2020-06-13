@@ -11,7 +11,7 @@ export default class Search {
             const res = await axios(`${url}`);
             this.result = res.data.recipes;
         } catch (e) {
-            console.log(e); //throw new Error(e);
+            console.log(e);
         }
     }
 }
