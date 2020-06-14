@@ -248,9 +248,7 @@
                     </div>
                     <p class="shopping__description">Ricotta cheese</p>
                     <button class="shopping__delete btn-tiny">
-                        <svg>
-                            <use href="img/icons.svg#icon-circle-with-cross"></use>
-                        </svg>
+                        <i class="far fa-times-circle"></i>
                     </button>
                 </li>
 

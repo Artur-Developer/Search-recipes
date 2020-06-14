@@ -20340,6 +20340,48 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
+/***/ "./node_modules/uniqid/index.js":
+/*!**************************************!*\
+  !*** ./node_modules/uniqid/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(process) {/* 
+(The MIT License)
+Copyright (c) 2014-2019 Halász Ádám <mail@adamhalasz.com>
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+//  Unique Hexatridecimal ID Generator
+// ================================================
+
+//  Dependencies
+// ================================================
+var pid = process && process.pid ? process.pid.toString(36) : '' ;
+var address = '';
+if(false){ var i, mac, networkInterfaces; } 
+
+//  Exports
+// ================================================
+module.exports = module.exports.default = function(prefix, suffix){ return (prefix ? prefix : '') + address + pid + now().toString(36) + (suffix ? suffix : ''); }
+module.exports.process = function(prefix, suffix){ return (prefix ? prefix : '') + pid + now().toString(36) + (suffix ? suffix : ''); }
+module.exports.time    = function(prefix, suffix){ return (prefix ? prefix : '') + now().toString(36) + (suffix ? suffix : ''); }
+
+//  Helpers
+// ================================================
+function now(){
+    var time = Date.now();
+    var last = now.last || time;
+    return now.last = time > last ? time : last + 1;
+}
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../process/browser.js */ "./node_modules/process/browser.js")))
+
+/***/ }),
+
 /***/ "./node_modules/webpack/buildin/global.js":
 /*!***********************************!*\
   !*** (webpack)/buildin/global.js ***!
@@ -20417,14 +20459,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _models_Search__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./models/Search */ "./resources/js/models/Search.js");
 /* harmony import */ var _models_Recipe__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./models/Recipe */ "./resources/js/models/Recipe.js");
-/* harmony import */ var _views_searchView__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./views/searchView */ "./resources/js/views/searchView.js");
-/* harmony import */ var _views_recipeView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./views/recipeView */ "./resources/js/views/recipeView.js");
-/* harmony import */ var _views_base__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./views/base */ "./resources/js/views/base.js");
+/* harmony import */ var _models_ShowList__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./models/ShowList */ "./resources/js/models/ShowList.js");
+/* harmony import */ var _views_searchView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./views/searchView */ "./resources/js/views/searchView.js");
+/* harmony import */ var _views_recipeView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./views/recipeView */ "./resources/js/views/recipeView.js");
+/* harmony import */ var _views_base__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./views/base */ "./resources/js/views/base.js");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 
 
 
@@ -20454,7 +20498,7 @@ var searchController = /*#__PURE__*/function () {
         switch (_context.prev = _context.next) {
           case 0:
             // Get query from input
-            query = _views_searchView__WEBPACK_IMPORTED_MODULE_3__["getInput"](); //TODO
+            query = _views_searchView__WEBPACK_IMPORTED_MODULE_4__["getInput"](); //TODO
 
             if (!query) {
               _context.next = 16;
@@ -20464,11 +20508,11 @@ var searchController = /*#__PURE__*/function () {
             // Save search model into state
             state.search = new _models_Search__WEBPACK_IMPORTED_MODULE_1__["default"](query); //Prepare UI to render
 
-            _views_searchView__WEBPACK_IMPORTED_MODULE_3__["clearInput"]();
-            _views_searchView__WEBPACK_IMPORTED_MODULE_3__["clearResult"]();
-            _views_searchView__WEBPACK_IMPORTED_MODULE_3__["clearCountRecipes"]();
-            _views_searchView__WEBPACK_IMPORTED_MODULE_3__["clearErrorMessage"]();
-            Object(_views_base__WEBPACK_IMPORTED_MODULE_5__["render_loader"])(_views_base__WEBPACK_IMPORTED_MODULE_5__["elements"].search_parent); //Get a result
+            _views_searchView__WEBPACK_IMPORTED_MODULE_4__["clearInput"]();
+            _views_searchView__WEBPACK_IMPORTED_MODULE_4__["clearResult"]();
+            _views_searchView__WEBPACK_IMPORTED_MODULE_4__["clearCountRecipes"]();
+            _views_searchView__WEBPACK_IMPORTED_MODULE_4__["clearErrorMessage"]();
+            Object(_views_base__WEBPACK_IMPORTED_MODULE_6__["render_loader"])(_views_base__WEBPACK_IMPORTED_MODULE_6__["elements"].search_parent); //Get a result
 
             _context.next = 10;
             return state.search.getResults();
@@ -20477,14 +20521,14 @@ var searchController = /*#__PURE__*/function () {
             resolve = _context.sent;
 
             if (!resolve) {
-              _views_searchView__WEBPACK_IMPORTED_MODULE_3__["render_error"](query);
+              _views_searchView__WEBPACK_IMPORTED_MODULE_4__["render_error"](query);
             }
 
-            Object(_views_base__WEBPACK_IMPORTED_MODULE_5__["clearLoader"])(); //Render result
+            Object(_views_base__WEBPACK_IMPORTED_MODULE_6__["clearLoader"])(); //Render result
 
-            _views_searchView__WEBPACK_IMPORTED_MODULE_3__["count_recipes"](state.search.result.length);
-            _views_searchView__WEBPACK_IMPORTED_MODULE_3__["clearErrorMessage"]();
-            _views_searchView__WEBPACK_IMPORTED_MODULE_3__["render"](state.search.result);
+            _views_searchView__WEBPACK_IMPORTED_MODULE_4__["count_recipes"](state.search.result.length);
+            _views_searchView__WEBPACK_IMPORTED_MODULE_4__["clearErrorMessage"]();
+            _views_searchView__WEBPACK_IMPORTED_MODULE_4__["render"](state.search.result);
 
           case 16:
           case "end":
@@ -20499,18 +20543,18 @@ var searchController = /*#__PURE__*/function () {
   };
 }();
 
-_views_base__WEBPACK_IMPORTED_MODULE_5__["elements"].search_form.addEventListener('submit', function (e) {
+_views_base__WEBPACK_IMPORTED_MODULE_6__["elements"].search_form.addEventListener('submit', function (e) {
   e.preventDefault();
   searchController();
 }); //paginate
 
-_views_base__WEBPACK_IMPORTED_MODULE_5__["elements"].results_page.addEventListener('click', function (e) {
+_views_base__WEBPACK_IMPORTED_MODULE_6__["elements"].results_page.addEventListener('click', function (e) {
   var btn = e.target.closest('.btn-inline');
 
   if (btn) {
     var goToPage = parseInt(btn.dataset["goto"], 10);
-    _views_searchView__WEBPACK_IMPORTED_MODULE_3__["clearResult"]();
-    _views_searchView__WEBPACK_IMPORTED_MODULE_3__["render"](state.search.result, goToPage);
+    _views_searchView__WEBPACK_IMPORTED_MODULE_4__["clearResult"]();
+    _views_searchView__WEBPACK_IMPORTED_MODULE_4__["render"](state.search.result, goToPage);
   }
 });
 
@@ -20529,10 +20573,10 @@ var recipeController = /*#__PURE__*/function () {
             }
 
             //prepare UI
-            _views_recipeView__WEBPACK_IMPORTED_MODULE_4__["clear_recipe"]();
-            Object(_views_base__WEBPACK_IMPORTED_MODULE_5__["render_loader"])(_views_base__WEBPACK_IMPORTED_MODULE_5__["elements"].recipe);
+            _views_recipeView__WEBPACK_IMPORTED_MODULE_5__["clear_recipe"]();
+            Object(_views_base__WEBPACK_IMPORTED_MODULE_6__["render_loader"])(_views_base__WEBPACK_IMPORTED_MODULE_6__["elements"].recipe);
             state.recipe = new _models_Recipe__WEBPACK_IMPORTED_MODULE_2__["default"](id);
-            if (state.search) _views_searchView__WEBPACK_IMPORTED_MODULE_3__["hightLightSelectedRecipe"](id);
+            if (state.search) _views_searchView__WEBPACK_IMPORTED_MODULE_4__["hightLightSelectedRecipe"](id);
             _context2.next = 8;
             return state.recipe.getRecipe();
 
@@ -20541,8 +20585,8 @@ var recipeController = /*#__PURE__*/function () {
             state.recipe.calcCookTime();
             state.recipe.calcServings(); //render recipe
 
-            Object(_views_base__WEBPACK_IMPORTED_MODULE_5__["clearLoader"])();
-            _views_recipeView__WEBPACK_IMPORTED_MODULE_4__["renderRecipe"](state.recipe);
+            Object(_views_base__WEBPACK_IMPORTED_MODULE_6__["clearLoader"])();
+            _views_recipeView__WEBPACK_IMPORTED_MODULE_5__["renderRecipe"](state.recipe);
 
           case 13:
           case "end":
@@ -20560,19 +20604,18 @@ var recipeController = /*#__PURE__*/function () {
 ['hashchange', 'load'].forEach(function (event) {
   return window.addEventListener(event, recipeController);
 });
-_views_base__WEBPACK_IMPORTED_MODULE_5__["elements"].recipe.addEventListener('click', function (e) {
+_views_base__WEBPACK_IMPORTED_MODULE_6__["elements"].recipe.addEventListener('click', function (e) {
   if (e.target.matches('.btn-decrease *')) {
     if (state.recipe.servings > 1) {
       state.recipe.updateServings('dec');
-      _views_recipeView__WEBPACK_IMPORTED_MODULE_4__["update_servings_ingredients"](state.recipe);
+      _views_recipeView__WEBPACK_IMPORTED_MODULE_5__["update_servings_ingredients"](state.recipe);
     }
   } else if (e.target.matches('.btn-increase, .btn-increase *')) {
     state.recipe.updateServings('inc');
-    _views_recipeView__WEBPACK_IMPORTED_MODULE_4__["update_servings_ingredients"](state.recipe);
+    _views_recipeView__WEBPACK_IMPORTED_MODULE_5__["update_servings_ingredients"](state.recipe);
   }
-
-  console.log(state.recipe);
 });
+window.sl = new _models_ShowList__WEBPACK_IMPORTED_MODULE_3__["default"]();
 
 /***/ }),
 
@@ -20855,6 +20898,69 @@ var Search = /*#__PURE__*/function () {
   }]);
 
   return Search;
+}();
+
+
+
+/***/ }),
+
+/***/ "./resources/js/models/ShowList.js":
+/*!*****************************************!*\
+  !*** ./resources/js/models/ShowList.js ***!
+  \*****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ShopList; });
+/* harmony import */ var uniqid__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! uniqid */ "./node_modules/uniqid/index.js");
+/* harmony import */ var uniqid__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(uniqid__WEBPACK_IMPORTED_MODULE_0__);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+var ShopList = /*#__PURE__*/function () {
+  function ShopList() {
+    _classCallCheck(this, ShopList);
+
+    this.items = [];
+  }
+
+  _createClass(ShopList, [{
+    key: "addItem",
+    value: function addItem(count, unit, ingredient) {
+      var item = {
+        id: uniqid__WEBPACK_IMPORTED_MODULE_0___default()(),
+        count: count,
+        unit: unit,
+        ingredient: ingredient
+      };
+      this.items.push(item);
+      return item;
+    }
+  }, {
+    key: "deleteItem",
+    value: function deleteItem(id) {
+      var index = this.items.findIndex(function (el) {
+        return el.id === id;
+      });
+      this.items.splice(index, 1);
+    }
+  }, {
+    key: "updateItem",
+    value: function updateItem(id, newCount) {
+      this.items.find(function (el) {
+        return el.id === id;
+      }).count = newCount;
+    }
+  }]);
+
+  return ShopList;
 }();
 
 

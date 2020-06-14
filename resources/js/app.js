@@ -1,8 +1,10 @@
 import Search from './models/Search';
 import Recipe from './models/Recipe';
+import ShopList from './models/ShowList';
 import * as searchView from './views/searchView';
 import * as recipeView from './views/recipeView';
 import { elements, render_loader, clearLoader } from './views/base';
+
 require('./bootstrap');
 
 /*** Global state of the app
@@ -101,5 +103,6 @@ elements.recipe.addEventListener('click', e => {
         state.recipe.updateServings('inc');
         recipeView.update_servings_ingredients(state.recipe);
     }
-    console.log(state.recipe);
 });
+
+window.sl = new ShopList();
