@@ -3,6 +3,7 @@ import Recipe from './models/Recipe';
 import ShopList from './models/ShowList';
 import * as searchView from './views/searchView';
 import * as recipeView from './views/recipeView';
+import * as shopListView from './views/shopListView';
 import { elements, render_loader, clearLoader } from './views/base';
 
 require('./bootstrap');
@@ -14,6 +15,7 @@ require('./bootstrap');
 - Favorites recipes
 */
 const state = {};
+window.state = state;
 
 /**
  * Search controller
@@ -93,6 +95,30 @@ const recipeController = async() => {
 ['hashchange', 'load'].forEach(event => window.addEventListener(event, recipeController));
 
 
+const shopListController = () => {
+    if (!state.shopList) state.shopList = new ShopList();
+
+    state.recipe.ingredients.forEach(el => {
+        const item = state.shopList.addItem(el.count, el.unit, el.ingredient);
+        shopListView.render_item(item);
+    });
+}
+
+elements.shop_list.addEventListener('click', e => {
+    const id = e.target.closest('.shopping__item').dataset.itemid;
+
+    if (e.target.matches('.shopping__delete, .shopping__delete *')) {
+        state.shopList.deleteItem(id);
+
+        //remove from UI
+        shopListView.delete_item(id);
+    } else if (e.target.matches('.shopping__count-value')) {
+        const val = parseFloat(e.target.value, 10);
+
+        state.shopList.updateСount(id, val);
+    }
+});
+
 elements.recipe.addEventListener('click', e => {
     if (e.target.matches('.btn-decrease *')) {
         if (state.recipe.servings > 1) {
@@ -102,7 +128,7 @@ elements.recipe.addEventListener('click', e => {
     } else if (e.target.matches('.btn-increase, .btn-increase *')) {
         state.recipe.updateServings('inc');
         recipeView.update_servings_ingredients(state.recipe);
+    } else if (e.target.matches('.recipe__btn-add, .recipe__btn-add *')) {
+        shopListController();
     }
 });
-
-window.sl = new ShopList();

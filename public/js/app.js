@@ -20462,12 +20462,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _models_ShowList__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./models/ShowList */ "./resources/js/models/ShowList.js");
 /* harmony import */ var _views_searchView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./views/searchView */ "./resources/js/views/searchView.js");
 /* harmony import */ var _views_recipeView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./views/recipeView */ "./resources/js/views/recipeView.js");
-/* harmony import */ var _views_base__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./views/base */ "./resources/js/views/base.js");
+/* harmony import */ var _views_shopListView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./views/shopListView */ "./resources/js/views/shopListView.js");
+/* harmony import */ var _views_base__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./views/base */ "./resources/js/views/base.js");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 
 
 
@@ -20486,6 +20488,7 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 
 var state = {};
+window.state = state;
 /**
  * Search controller
  */
@@ -20512,7 +20515,7 @@ var searchController = /*#__PURE__*/function () {
             _views_searchView__WEBPACK_IMPORTED_MODULE_4__["clearResult"]();
             _views_searchView__WEBPACK_IMPORTED_MODULE_4__["clearCountRecipes"]();
             _views_searchView__WEBPACK_IMPORTED_MODULE_4__["clearErrorMessage"]();
-            Object(_views_base__WEBPACK_IMPORTED_MODULE_6__["render_loader"])(_views_base__WEBPACK_IMPORTED_MODULE_6__["elements"].search_parent); //Get a result
+            Object(_views_base__WEBPACK_IMPORTED_MODULE_7__["render_loader"])(_views_base__WEBPACK_IMPORTED_MODULE_7__["elements"].search_parent); //Get a result
 
             _context.next = 10;
             return state.search.getResults();
@@ -20524,7 +20527,7 @@ var searchController = /*#__PURE__*/function () {
               _views_searchView__WEBPACK_IMPORTED_MODULE_4__["render_error"](query);
             }
 
-            Object(_views_base__WEBPACK_IMPORTED_MODULE_6__["clearLoader"])(); //Render result
+            Object(_views_base__WEBPACK_IMPORTED_MODULE_7__["clearLoader"])(); //Render result
 
             _views_searchView__WEBPACK_IMPORTED_MODULE_4__["count_recipes"](state.search.result.length);
             _views_searchView__WEBPACK_IMPORTED_MODULE_4__["clearErrorMessage"]();
@@ -20543,12 +20546,12 @@ var searchController = /*#__PURE__*/function () {
   };
 }();
 
-_views_base__WEBPACK_IMPORTED_MODULE_6__["elements"].search_form.addEventListener('submit', function (e) {
+_views_base__WEBPACK_IMPORTED_MODULE_7__["elements"].search_form.addEventListener('submit', function (e) {
   e.preventDefault();
   searchController();
 }); //paginate
 
-_views_base__WEBPACK_IMPORTED_MODULE_6__["elements"].results_page.addEventListener('click', function (e) {
+_views_base__WEBPACK_IMPORTED_MODULE_7__["elements"].results_page.addEventListener('click', function (e) {
   var btn = e.target.closest('.btn-inline');
 
   if (btn) {
@@ -20574,7 +20577,7 @@ var recipeController = /*#__PURE__*/function () {
 
             //prepare UI
             _views_recipeView__WEBPACK_IMPORTED_MODULE_5__["clear_recipe"]();
-            Object(_views_base__WEBPACK_IMPORTED_MODULE_6__["render_loader"])(_views_base__WEBPACK_IMPORTED_MODULE_6__["elements"].recipe);
+            Object(_views_base__WEBPACK_IMPORTED_MODULE_7__["render_loader"])(_views_base__WEBPACK_IMPORTED_MODULE_7__["elements"].recipe);
             state.recipe = new _models_Recipe__WEBPACK_IMPORTED_MODULE_2__["default"](id);
             if (state.search) _views_searchView__WEBPACK_IMPORTED_MODULE_4__["hightLightSelectedRecipe"](id);
             _context2.next = 8;
@@ -20585,7 +20588,7 @@ var recipeController = /*#__PURE__*/function () {
             state.recipe.calcCookTime();
             state.recipe.calcServings(); //render recipe
 
-            Object(_views_base__WEBPACK_IMPORTED_MODULE_6__["clearLoader"])();
+            Object(_views_base__WEBPACK_IMPORTED_MODULE_7__["clearLoader"])();
             _views_recipeView__WEBPACK_IMPORTED_MODULE_5__["renderRecipe"](state.recipe);
 
           case 13:
@@ -20604,7 +20607,28 @@ var recipeController = /*#__PURE__*/function () {
 ['hashchange', 'load'].forEach(function (event) {
   return window.addEventListener(event, recipeController);
 });
-_views_base__WEBPACK_IMPORTED_MODULE_6__["elements"].recipe.addEventListener('click', function (e) {
+
+var shopListController = function shopListController() {
+  if (!state.shopList) state.shopList = new _models_ShowList__WEBPACK_IMPORTED_MODULE_3__["default"]();
+  state.recipe.ingredients.forEach(function (el) {
+    var item = state.shopList.addItem(el.count, el.unit, el.ingredient);
+    _views_shopListView__WEBPACK_IMPORTED_MODULE_6__["render_item"](item);
+  });
+};
+
+_views_base__WEBPACK_IMPORTED_MODULE_7__["elements"].shop_list.addEventListener('click', function (e) {
+  var id = e.target.closest('.shopping__item').dataset.itemid;
+
+  if (e.target.matches('.shopping__delete, .shopping__delete *')) {
+    state.shopList.deleteItem(id); //remove from UI
+
+    _views_shopListView__WEBPACK_IMPORTED_MODULE_6__["delete_item"](id);
+  } else if (e.target.matches('.shopping__count-value')) {
+    var val = parseFloat(e.target.value, 10);
+    state.shopList.updateСount(id, val);
+  }
+});
+_views_base__WEBPACK_IMPORTED_MODULE_7__["elements"].recipe.addEventListener('click', function (e) {
   if (e.target.matches('.btn-decrease *')) {
     if (state.recipe.servings > 1) {
       state.recipe.updateServings('dec');
@@ -20613,9 +20637,10 @@ _views_base__WEBPACK_IMPORTED_MODULE_6__["elements"].recipe.addEventListener('cl
   } else if (e.target.matches('.btn-increase, .btn-increase *')) {
     state.recipe.updateServings('inc');
     _views_recipeView__WEBPACK_IMPORTED_MODULE_5__["update_servings_ingredients"](state.recipe);
+  } else if (e.target.matches('.recipe__btn-add, .recipe__btn-add *')) {
+    shopListController();
   }
 });
-window.sl = new _models_ShowList__WEBPACK_IMPORTED_MODULE_3__["default"]();
 
 /***/ }),
 
@@ -20709,21 +20734,20 @@ var Recipe = /*#__PURE__*/function () {
                 this.publisher = res.data.recipe.publisher;
                 this.publisher_url = res.data.recipe.publisher_url;
                 this.rank = res.data.recipe.social_rank;
-                console.log(res);
-                _context.next = 18;
+                _context.next = 17;
                 break;
 
-              case 15:
-                _context.prev = 15;
+              case 14:
+                _context.prev = 14;
                 _context.t0 = _context["catch"](0);
                 console.log(_context.t0);
 
-              case 18:
+              case 17:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this, [[0, 15]]);
+        }, _callee, this, [[0, 14]]);
       }));
 
       function getRecipe() {
@@ -20952,8 +20976,8 @@ var ShopList = /*#__PURE__*/function () {
       this.items.splice(index, 1);
     }
   }, {
-    key: "updateItem",
-    value: function updateItem(id, newCount) {
+    key: "update\u0421ount",
+    value: function updateOunt(id, newCount) {
       this.items.find(function (el) {
         return el.id === id;
       }).count = newCount;
@@ -20993,7 +21017,9 @@ var elements = {
   //section for render single recipe
   results_page: document.querySelector('.results__pages'),
   // for paginate buttons
-  recipe: document.querySelector('.recipe') //recipe sections
+  recipe: document.querySelector('.recipe'),
+  //recipe sections
+  shop_list: document.querySelector('.shopping__list') //shop list section
 
 };
 var elementsString = {
@@ -21076,7 +21102,7 @@ var create_ingredients = function create_ingredients(ingredient) {
 var renderRecipe = function renderRecipe(recipe) {
   var template_recipe = "\n            <figure class=\"recipe__fig\">\n                <img src=\"".concat(recipe.img, "\" alt=\"").concat(recipe.title, "}\" class=\"recipe__img\">\n                <h1 class=\"recipe__title\">\n                    <span>").concat(recipe.title, "</span>\n                </h1>\n            </figure>\n            <div class=\"recipe__details\">\n                <div class=\"recipe__info\">\n                    <i class=\"fa fa-clock\"></i>\n                    <span class=\"recipe__info-data recipe__info-data--minutes\">").concat(recipe.time, "</span>\n                    <span class=\"recipe__info-text\"> minutes</span>\n                </div>\n                <div class=\"recipe__info\">\n\n                    <i class=\"fa fa-utensils\"></i>\n                    <span class=\"recipe__info-data recipe__info-data--people\">").concat(recipe.servings, "</span>\n                    <span class=\"recipe__info-text\"> servings</span>\n\n                    <div class=\"recipe__info-buttons\">\n                        <button class=\"btn-tiny btn-decrease\">\n                            <i class=\"fa fa-minus-circle\"></i>\n                        </button>\n                        <button class=\"btn-tiny btn-increase\">\n                            <i class=\"fa fa-plus-circle\"></i>\n                        </button>\n                    </div>\n\n                </div>\n                <button class=\"recipe__love\">\n                    <i class=\"like_icon far fa-heart\"></i>\n                </button>\n            </div>\n\n            <div class=\"recipe__ingredients\">\n                <ul class=\"recipe__ingredient-list\">\n                    ").concat(recipe.ingredients.map(function (el) {
     return create_ingredients(el);
-  }).join(''), "\n                </ul>\n\n                <button class=\"btn-small recipe__btn\">\n                    <i class=\"fa fa-shopping-cart\"></i>\n                    <span>Add to shopping list</span>\n                </button>\n            </div>\n\n            <div class=\"recipe__directions\">\n                <h2 class=\"heading-2\">How to cook it</h2>\n                <p class=\"recipe__directions-text\">\n                    This recipe was carefully designed and tested by\n                    <span class=\"recipe__by\">").concat(recipe.publisher, "</span>. Please check out directions at their website.\n                </p>\n                <a class=\"btn-small recipe__btn\" href=\"").concat(recipe.publisher_url, "}\" target=\"_blank\">\n                    <span>Directions</span>\n                    <i class=\"fa fa-caret-right\"></i>\n                </a>\n            </div>");
+  }).join(''), "\n                </ul>\n\n                <button class=\"btn-small recipe__btn recipe__btn-add\">\n                    <i class=\"fa fa-shopping-cart\"></i>\n                    <span>Add to shopping list</span>\n                </button>\n            </div>\n\n            <div class=\"recipe__directions\">\n                <h2 class=\"heading-2\">How to cook it</h2>\n                <p class=\"recipe__directions-text\">\n                    This recipe was carefully designed and tested by\n                    <span class=\"recipe__by\">").concat(recipe.publisher, "</span>. Please check out directions at their website.\n                </p>\n                <a class=\"btn-small recipe__btn\" href=\"").concat(recipe.publisher_url, "}\" target=\"_blank\">\n                    <span>Directions</span>\n                    <i class=\"fa fa-caret-right\"></i>\n                </a>\n            </div>");
   _base__WEBPACK_IMPORTED_MODULE_0__["elements"].recipe.insertAdjacentHTML('afterbegin', template_recipe);
 };
 var update_servings_ingredients = function update_servings_ingredients(recipe) {
@@ -21208,6 +21234,30 @@ var render = function render(recipes) {
   var end = page * resPerPage;
   recipes.slice(start, end).forEach(renderRecipe);
   create_paginate(page, recipes.length, resPerPage);
+};
+
+/***/ }),
+
+/***/ "./resources/js/views/shopListView.js":
+/*!********************************************!*\
+  !*** ./resources/js/views/shopListView.js ***!
+  \********************************************/
+/*! exports provided: render_item, delete_item */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render_item", function() { return render_item; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "delete_item", function() { return delete_item; });
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base */ "./resources/js/views/base.js");
+
+var render_item = function render_item(item) {
+  var template_item = "\n    <li class=\"shopping__item\" data-itemid=".concat(item.id, ">\n        <div class=\"shopping__count\">\n            <input type=\"number\" value=\"").concat(item.count, "\" step=\"").concat(item.count, "\" class=\"shopping__count-value\">\n            <p>").concat(item.unit, "</p>\n        </div>\n        <p class=\"shopping__description\">").concat(item.ingredient, "</p>\n        <button class=\"shopping__delete btn-tiny\">\n            <i class=\"far fa-times-circle\"></i>\n        </button>\n    </li>");
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].shop_list.insertAdjacentHTML('beforeend', template_item);
+};
+var delete_item = function delete_item(id) {
+  var item = document.querySelector("[data-itemid=\"".concat(id, "\"]"));
+  if (item) item.parentElement.removeChild(item);
 };
 
 /***/ }),

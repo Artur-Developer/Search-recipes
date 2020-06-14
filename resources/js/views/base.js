@@ -5,7 +5,8 @@ export const elements = {
     search_parent: document.querySelector('.results'), //parent section for redner
     single_recipe: document.querySelector('.recipe'), //section for render single recipe
     results_page: document.querySelector('.results__pages'), // for paginate buttons
-    recipe: document.querySelector('.recipe') //recipe sections
+    recipe: document.querySelector('.recipe'), //recipe sections
+    shop_list: document.querySelector('.shopping__list') //shop list section
 };
 
 export const elementsString = {

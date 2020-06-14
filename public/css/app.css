@@ -625,7 +625,6 @@ body {
 .shopping__list {
   list-style: none;
   max-height: 77rem;
-  overflow: scroll;
 }
 
 .shopping__item {
@@ -683,6 +682,11 @@ body {
   visibility: hidden;
   opacity: 0;
   transition: all 0.5s;
+}
+
+.shopping__delete i {
+  color: #F59A83;
+  font-size: 19px;
 }
 
 .shopping__item:hover .shopping__delete {

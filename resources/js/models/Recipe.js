@@ -16,7 +16,6 @@ export default class Recipe {
             this.publisher = res.data.recipe.publisher;
             this.publisher_url = res.data.recipe.publisher_url;
             this.rank = res.data.recipe.social_rank;
-            console.log(res);
         } catch (e) {
             console.log(e);
         }

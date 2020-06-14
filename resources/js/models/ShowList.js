@@ -23,7 +23,7 @@ export default class ShopList {
         this.items.splice(index, 1);
     }
 
-    updateItem(id, newCount) {
+    updateСount(id, newCount) {
         this.items.find(el => el.id === id).count = newCount;
     }
 }
