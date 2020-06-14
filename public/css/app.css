@@ -263,7 +263,6 @@ body {
 
 .likes {
   position: relative;
-  align-self: stretch;
   padding: 0 !important;
   transition: all ease-in-out 0.25s;
 }
@@ -272,34 +271,40 @@ body {
   background-color: #F2EFEE;
 }
 
-.likes__field {
+.likes .likes__field {
   cursor: pointer;
-  padding: 0 4rem;
   display: flex;
+  justify-content: center;
   align-items: center;
-  height: 100%;
+  padding: 0 4rem;
   transition: all 0.3s;
   background: linear-gradient(to right bottom, #FBDB89, #F48982);
   -webkit-background-clip: text;
   -moz-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  height: 100px;
 }
 
-.likes__field .fa {
-  display: inline;
+.likes .likes__field .heart_icon {
+  color: #F59A83;
+}
+
+.likes .likes__field .likes__count {
+  padding: 3px 4px;
+  position: absolute;
+  float: right;
+  margin-left: 15px;
+  margin-top: -10px;
+  vertical-align: top;
+  border-radius: 50%;
+  background: red;
+  font-size: 12px;
+  color: #fff;
 }
 
 .likes__panel:hover,
 .likes__field:hover + .likes__panel {
   visibility: visible;
   opacity: 1;
-}
-
-.likes__icon {
-  fill: #F59A83;
-  height: 3.75rem;
-  width: 3.75rem;
 }
 
 .likes__panel {

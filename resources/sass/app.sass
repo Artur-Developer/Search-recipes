@@ -204,38 +204,40 @@ body
 
 .likes
   position: relative
-  align-self: stretch
   padding: 0 !important
   transition: all ease-in-out .25s
   &:hover
       background-color: #F2EFEE
+  .likes__field
+    cursor: pointer
+    display: flex
+    justify-content: center
+    align-items: center
+    padding: 0 4rem
+    transition: all .3s
+    background: linear-gradient(to right bottom, #FBDB89, #F48982)
+    -webkit-background-clip: text
+    -moz-background-clip: text
+    height: 100px
+    .heart_icon
+        color: #F59A83
 
-.likes__field
-  cursor: pointer
-  padding: 0 4rem
-  display: flex
-  align-items: center
-  height: 100%
-  transition: all .3s
-  background: -moz-linear-gradient(to right bottom, #FBDB89, #F48982)
-  background: -webkit-linear-gradient(to right bottom, #FBDB89, #F48982)
-  background: linear-gradient(to right bottom, #FBDB89, #F48982)
-  -webkit-background-clip: text
-  -moz-background-clip: text
-  background-clip: text
-  -webkit-text-fill-color: transparent
-
-  .fa
-    display: inline
+    .likes__count
+        padding: 3px 4px
+        position: absolute
+        float: right
+        margin-left: 15px
+        margin-top: -10px
+        vertical-align: top
+        border-radius: 50%
+        background: red
+        font-size: 12px
+        color: #fff
 
 .likes__panel:hover, .likes__field:hover + .likes__panel
   visibility: visible
   opacity: 1
 
-.likes__icon
-  fill: #F59A83
-  height: 3.75rem
-  width: 3.75rem
 
 .likes__panel
   position: absolute

@@ -27,7 +27,10 @@
             </form>
             <div class="likes">
                 <div class="likes__field">
-                    <i class="fa fa-3x fa-heart"></i>
+                    <span class="likes__count">
+                        12
+                    </span>
+                    <i class="fa fa-3x fa-heart heart_icon"></i>
                 </div>
                 <div class="likes__panel">
                     <!--
