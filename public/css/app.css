@@ -223,6 +223,14 @@ body {
   transition: all 0.3s;
 }
 
+.search .clear_input {
+  font-size: 15px;
+  right: 15px;
+  position: relative;
+  color: #F48982;
+  display: none;
+}
+
 .search:focus-within {
   transform: translateY(-2px);
   box-shadow: 0 0.7rem 3rem rgba(101, 90, 86, 0.08);
@@ -671,7 +679,7 @@ body {
 }
 
 .shopping__description {
-  flex: 1;
+  display: flex;
   font-size: 1.3rem;
   margin-top: 0.4rem;
   margin-right: 1.5rem;

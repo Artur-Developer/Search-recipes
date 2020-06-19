@@ -6,7 +6,9 @@ export const elements = {
     single_recipe: document.querySelector('.recipe'), //section for render single recipe
     results_page: document.querySelector('.results__pages'), // for paginate buttons
     recipe: document.querySelector('.recipe'), //recipe sections
-    shop_list: document.querySelector('.shopping__list') //shop list section
+    shop_list: document.querySelector('.shopping__list'), //shop list section
+    clear_input: document.querySelector('.clear_input'), //icon for clear field
+    favorites_list: document.querySelector('.likes__list'), //list of favorites
 };
 
 export const elementsString = {

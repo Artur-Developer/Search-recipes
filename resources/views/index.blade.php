@@ -19,7 +19,8 @@
                 <img src="img/logo.png" alt="Logo" class="header__logo">
             </a>
             <form class="search">
-                <input type="text" class="search__field" placeholder="Search over 1,000,000 recipes...">
+                <input type="text" id="search_input" class="search__field" placeholder="Search over 1,000,000 recipes...">
+                <i class="clear_input far fa-times-circle"></i>
                 <button class="btn search__btn">
                     <i class="fa fa-search"></i>
                     <span>Search</span>
@@ -27,14 +28,14 @@
             </form>
             <div class="likes">
                 <div class="likes__field">
-                    <span class="likes__count">
-                        12
-                    </span>
+                    {{-- <span class="likes__count">
+                        123
+                    </span> --}}
                     <i class="fa fa-3x fa-heart heart_icon"></i>
                 </div>
                 <div class="likes__panel">
-                    <!--
                     <ul class="likes__list">
+                        <!--
                         <li>
                             <a class="likes__link" href="#23456">
                                 <figure class="likes__fig">
@@ -46,8 +47,8 @@
                                 </div>
                             </a>
                         </li>
+                    -->
                     </ul>
-                -->
                 </div>
             </div>
         </header>

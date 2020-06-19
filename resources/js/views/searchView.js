@@ -9,6 +9,14 @@ export const clearResult = () => {
     elements.results_page.innerHTML = '';
 };
 
+export const show_clear_icon = () => {
+    elements.clear_input.style.display = 'block';
+};
+
+export const close_clear_icon = () => {
+    elements.clear_input.style.display = 'none';
+};
+
 export const hightLightSelectedRecipe = id => {
     const arrLinks = Array.from(document.querySelectorAll('.results__link'));
 
@@ -34,7 +42,7 @@ export const clearErrorMessage = () => {
  * @param {string} title
  * @param {num} limit
  */
-const limitRecipeTitle = (title, limit = 17) => {
+export const limitRecipeTitle = (title, limit = 17) => {
     const newTitleArr = [];
     if (title.length > limit) {
         title.split(' ').reduce((acc, cur) => {
