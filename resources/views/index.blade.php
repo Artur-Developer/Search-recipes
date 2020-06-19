@@ -54,6 +54,8 @@
         </header>
 
         <div class="results">
+
+        {{-- here is preloader --}}
             <ul class="results__list">
 
                 {{--

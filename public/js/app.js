@@ -20473,15 +20473,6 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 
-
-
-
-
-
-
-
-
-
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 /*** Global state of the app
 - Search object
@@ -20509,6 +20500,7 @@ var searchController = /*#__PURE__*/function () {
 
             if (!query) {
               _context.next = 15;
+
               break;
             }
 
@@ -20536,6 +20528,7 @@ var searchController = /*#__PURE__*/function () {
             _views_searchView__WEBPACK_IMPORTED_MODULE_5__["count_recipes"](state.search.result.length);
             _views_searchView__WEBPACK_IMPORTED_MODULE_5__["clearErrorMessage"]();
             _views_searchView__WEBPACK_IMPORTED_MODULE_5__["render"](state.search.result);
+
 
           case 15:
           case "end":
@@ -20986,8 +20979,6 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-
-
 var Search = /*#__PURE__*/function () {
   function Search(query) {
     _classCallCheck(this, Search);
@@ -21129,6 +21120,7 @@ var elements = {
   //result list to render searched items
   search_parent: document.querySelector('.results'),
   //parent section for redner
+
   single_recipe: document.querySelector('.recipe'),
   //section for render single recipe
   results_page: document.querySelector('.results__pages'),
@@ -21140,6 +21132,7 @@ var elements = {
   clear_input: document.querySelector('.clear_input'),
   //icon for clear field
   favorites_list: document.querySelector('.likes__list') //list of favorites
+
 
 };
 var elementsString = {
@@ -21275,6 +21268,7 @@ var update_servings_ingredients = function update_servings_ingredients(recipe) {
   !*** ./resources/js/views/searchView.js ***!
   \******************************************/
 /*! exports provided: getInput, clearInput, clearResult, show_clear_icon, close_clear_icon, hightLightSelectedRecipe, clearCountRecipes, clearErrorMessage, limitRecipeTitle, count_recipes, render_error, create_paginate, render */
+
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21334,6 +21328,22 @@ var clearErrorMessage = function clearErrorMessage() {
  * @param {num} limit
  */
 
+var clearCountRecipes = function clearCountRecipes() {
+  var count_rec = document.querySelector(".".concat(_base__WEBPACK_IMPORTED_MODULE_0__["elementsString"].count_recipe));
+  if (count_rec) count_rec.parentNode.removeChild(count_rec);
+};
+var clearErrorMessage = function clearErrorMessage() {
+  var err_msg = document.querySelector(".".concat(_base__WEBPACK_IMPORTED_MODULE_0__["elementsString"].error_search));
+  if (err_msg) err_msg.parentNode.removeChild(err_msg);
+};
+
+/**
+ * Function that splice title, if his length > 17
+ *
+ * @param {string} title
+ * @param {num} limit
+ */
+
 var limitRecipeTitle = function limitRecipeTitle(title) {
   var limit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 17;
   var newTitleArr = [];
@@ -21362,6 +21372,7 @@ var renderRecipe = function renderRecipe(recipe) {
 
 var count_recipes = function count_recipes(num) {
   var template_count_recipes = "\n        <div class=\"count_recipes\">\n            <h1>Search results: <span>".concat(num, "</span> </h1>\n        </div>");
+
   _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_parent.insertAdjacentHTML("afterbegin", template_count_recipes);
 };
 var render_error = function render_error(val) {
@@ -21387,6 +21398,7 @@ var create_paginate = function create_paginate(page, numOfResults, resPerPage) {
   }
 };
 /**
+
  * Render all searched recipes
  */
 

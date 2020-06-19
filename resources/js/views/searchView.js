@@ -82,6 +82,7 @@ export const count_recipes = num => {
         <div class="count_recipes">
             <h1>Search results: <span>${num}</span> </h1>
         </div>`;
+  
     elements.search_parent.insertAdjacentHTML("afterbegin", template_count_recipes);
 };
 
@@ -90,6 +91,7 @@ export const render_error = val => {
     <div class="error_search">
         <h1>Nothing search by: <span>${val}</span> </h1>
     </div>`;
+
     elements.search_parent.insertAdjacentHTML("afterbegin", template_error);
 };
 
@@ -121,8 +123,10 @@ export const create_paginate = (page, numOfResults, resPerPage) => {
 
 
 /**
+
  * Render all searched recipes
  */
+
 export const render = (recipes, page = 1, resPerPage = 10) => {
     const start = (page - 1) * resPerPage;
     const end = page * resPerPage;

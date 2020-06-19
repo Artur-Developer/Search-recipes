@@ -32,10 +32,13 @@ const searchController = async() => {
         state.search = new Search(query);
 
         //Prepare UI to render
-        //searchView.clearInput();
         searchView.clearResult();
         searchView.clearCountRecipes();
         searchView.clearErrorMessage();
+
+        render_loader(elements.search_parent);
+
+        searchView.clearCountRecipes();
 
         render_loader(elements.search_parent);
 
