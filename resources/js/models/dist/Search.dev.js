@@ -25,10 +25,10 @@ function () {
   }
 
   _createClass(Search, [{
-    key: "getRecipe",
-    value: function getRecipe() {
+    key: "getResults",
+    value: function getResults() {
       var proxy, url, res;
-      return regeneratorRuntime.async(function getRecipe$(_context) {
+      return regeneratorRuntime.async(function getResults$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:

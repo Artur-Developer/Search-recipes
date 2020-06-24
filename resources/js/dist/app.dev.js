@@ -4,7 +4,11 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
 var _Search = _interopRequireDefault(require("./models/Search"));
 
+var _Recipe = _interopRequireDefault(require("./models/Recipe"));
+
 var searchView = _interopRequireWildcard(require("./views/searchView"));
+
+var recipeView = _interopRequireWildcard(require("./views/recipeView"));
 
 var _base = require("./views/base");
 
@@ -24,6 +28,9 @@ require('./bootstrap');
 
 
 var state = {};
+/**
+ * Search controller
+ */
 
 var searchController = function searchController() {
   var query, resolve;
@@ -35,7 +42,7 @@ var searchController = function searchController() {
           query = searchView.getInput(); //TODO
 
           if (!query) {
-            _context.next = 15;
+            _context.next = 16;
             break;
           }
 
@@ -44,14 +51,15 @@ var searchController = function searchController() {
 
           searchView.clearInput();
           searchView.clearResult();
-
           searchView.clearCountRecipes();
+          searchView.clearErrorMessage();
           (0, _base.render_loader)(_base.elements.search_parent); //Get a result
 
-          _context.next = 9;
-          return regeneratorRuntime.awrap(state.search.getRecipe());
+          _context.next = 10;
+          return regeneratorRuntime.awrap(state.search.getResults());
 
-        case 9:
+        case 10:
+
           resolve = _context.sent;
 
           if (!resolve) {
@@ -64,8 +72,7 @@ var searchController = function searchController() {
           searchView.clearErrorMessage();
           searchView.render(state.search.result);
 
-        case 15:
-
+        case 16:
         case "end":
           return _context.stop();
       }
@@ -76,4 +83,54 @@ var searchController = function searchController() {
 _base.elements.search_form.addEventListener('submit', function (e) {
   e.preventDefault();
   searchController();
+});
+
+_base.elements.results_page.addEventListener('click', function (e) {
+  var btn = e.target.closest('.btn-inline');
+
+  if (btn) {
+    var goToPage = parseInt(btn.dataset["goto"], 10);
+    searchView.clearResult();
+    searchView.render(state.search.result, goToPage);
+  }
+});
+
+var recipeController = function recipeController() {
+  var id;
+  return regeneratorRuntime.async(function recipeController$(_context2) {
+    while (1) {
+      switch (_context2.prev = _context2.next) {
+        case 0:
+          id = window.location.hash.replace('#', '');
+
+          if (!id) {
+            _context2.next = 12;
+            break;
+          }
+
+          //prepare UI
+          recipeView.clear_recipe();
+          (0, _base.render_loader)(_base.elements.recipe);
+          state.recipe = new _Recipe["default"](id);
+          _context2.next = 7;
+          return regeneratorRuntime.awrap(state.recipe.getRecipe());
+
+        case 7:
+          state.recipe.parseIngredients();
+          state.recipe.calcCookTime();
+          state.recipe.calcServings(); //render recipe
+
+          (0, _base.clearLoader)();
+          recipeView.renderRecipe(state.recipe);
+
+        case 12:
+        case "end":
+          return _context2.stop();
+      }
+    }
+  });
+};
+
+['hashchange', 'load'].forEach(function (event) {
+  return window.addEventListener(event, recipeController);
 });

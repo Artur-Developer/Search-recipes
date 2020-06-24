@@ -15,9 +15,12 @@
 <body>
     <div class="container">
         <header class="header">
-            <img src="img/logo.png" alt="Logo" class="header__logo">
+            <a href="{{ route('home') }}">
+                <img src="img/logo.png" alt="Logo" class="header__logo">
+            </a>
             <form class="search">
-                <input type="text" class="search__field" placeholder="Search over 1,000,000 recipes...">
+                <input type="text" id="search_input" class="search__field" placeholder="Search over 1,000,000 recipes...">
+                <i class="clear_input far fa-times-circle"></i>
                 <button class="btn search__btn">
                     <i class="fa fa-search"></i>
                     <span>Search</span>
@@ -25,7 +28,10 @@
             </form>
             <div class="likes">
                 <div class="likes__field">
-                    <i class="fa fa-3x fa-heart"></i>
+                    {{-- <span class="likes__count">
+                        123
+                    </span> --}}
+                    <i class="fa fa-3x fa-heart heart_icon"></i>
                 </div>
                 <div class="likes__panel">
                     <ul class="likes__list">
@@ -41,7 +47,7 @@
                                 </div>
                             </a>
                         </li>
-                        -->
+                    -->
                     </ul>
                 </div>
             </div>
@@ -51,13 +57,6 @@
 
         {{-- here is preloader --}}
             <ul class="results__list">
-                {{-- <div class="count_recipes">
-                    <h1>Search results: <span>28</span> </h1>
-                </div>
-
-                <div class="error_search">
-                    <h1>Nothing search by: <span>search_value</span> </h1>
-                </div>--}}
 
                 {{--
                 <li>
@@ -91,8 +90,6 @@
                 -->
             </div>
         </div>
-
-
 
         <div class="recipe">
             <!--
@@ -137,8 +134,6 @@
                     </svg>
                 </button>
             </div>
-
-
 
             <div class="recipe__ingredients">
                 <ul class="recipe__ingredient-list">
@@ -238,20 +233,8 @@
         <div class="shopping">
             <h2 class="heading-2">My Shopping List</h2>
 
-            <!-- <ul class="shopping__list">
-                <li class="shopping__item">
-                    <div class="shopping__count">
-                        <input type="number" value="500" step="100">
-                        <p>g</p>
-                    </div>
-                    <p class="shopping__description">Pasta</p>
-                    <button class="shopping__delete btn-tiny">
-                        <svg>
-                            <use href="img/icons.svg#icon-circle-with-cross"></use>
-                        </svg>
-                    </button>
-                </li>
-
+            <ul class="shopping__list">
+                <!--
                 <li class="shopping__item">
                     <div class="shopping__count">
                         <input type="number" value="0.5" step="0.1">
@@ -259,67 +242,11 @@
                     </div>
                     <p class="shopping__description">Ricotta cheese</p>
                     <button class="shopping__delete btn-tiny">
-                        <svg>
-                            <use href="img/icons.svg#icon-circle-with-cross"></use>
-                        </svg>
+                        <i class="far fa-times-circle"></i>
                     </button>
                 </li>
-
-                <li class="shopping__item">
-                    <div class="shopping__count">
-                        <input type="number" value="3.5" step="0.1">
-                        <p>tbsp</p>
-                    </div>
-                    <p class="shopping__description">Toasted almond slices</p>
-                    <button class="shopping__delete btn-tiny">
-                        <svg>
-                            <use href="img/icons.svg#icon-circle-with-cross"></use>
-                        </svg>
-                    </button>
-                </li>
-
-                <li class="shopping__item">
-                    <div class="shopping__count">
-                        <input type="number" value="0.5" step="0.1">
-                        <p>tbsp</p>
-                    </div>
-                    <p class="shopping__description">Sea salt</p>
-                    <button class="shopping__delete btn-tiny">
-                        <svg>
-                            <use href="img/icons.svg#icon-circle-with-cross"></use>
-                        </svg>
-                    </button>
-                </li>
-
-                <li class="shopping__item">
-                    <div class="shopping__count">
-                        <input type="number" value="0.25" step="0.1">
-                        <p>cup</p>
-                    </div>
-
-                    <p class="shopping__description">Minced green onions</p>
-                    <button class="shopping__delete btn-tiny">
-                        <svg>
-                            <use href="img/icons.svg#icon-circle-with-cross"></use>
-                        </svg>
-                    </button>
-                </li>
-
-                <li class="shopping__item">
-                    <div class="shopping__count">
-                        <input type="number" value="45" step="10">
-                        <p>g</p>
-                    </div>
-                    <p class="shopping__description">Sesame seeds</p>
-                    <button class="shopping__delete btn-tiny">
-                        <svg>
-                            <use href="img/icons.svg#icon-circle-with-cross"></use>
-                        </svg>
-                    </button>
-                </li>
-
+                -->
             </ul>
--->
         </div>
     </div>
     <script src="{{ asset('js/app.js') }}"></script>

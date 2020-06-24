@@ -134,30 +134,13 @@ body
 
 .btn-tiny
   height: 1.75rem
-  width: 1.75rem
+  margin-bottom: 14px
   border: none
   background: none
   cursor: pointer
 
-  svg
-    height: 100%
-    width: 100%
-    fill: #F59A83
-    transition: all .3s
-
   &:focus
     outline: none
-
-  &:hover svg
-    fill: #F48982
-    transform: translateY(-1px)
-
-  &:active svg
-    fill: #F48982
-    transform: translateY(0)
-
-  &:not(:last-child)
-    margin-right: .3rem
 
 .heading-2
   font-size: 1.8rem
@@ -181,20 +164,6 @@ body
   margin: 5rem auto
   text-align: center
 
-  svg
-    height: 5.5rem
-    width: 5.5rem
-    fill: #F59A83
-    transform-origin: 44% 50%
-    animation: rotate 1.5s infinite linear
-
-@keyframes rotate
-  0%
-    transform: rotate(0)
-
-  100%
-    transform: rotate(360deg)
-
 .header
   grid-area: head
   background-color: #F9F5F3
@@ -214,6 +183,13 @@ body
   align-items: center
   padding-left: 3rem
   transition: all .3s
+  .clear_input
+      font-size: 15px
+      right: 15px
+      position: relative
+      color: #F48982
+      display: none
+
 
   &:focus-within
     transform: translateY(-2px)
@@ -235,38 +211,40 @@ body
 
 .likes
   position: relative
-  align-self: stretch
   padding: 0 !important
-
-.likes__field
-  cursor: pointer
-  padding: 0 4rem
-  display: flex
-  align-items: center
-  height: 100%
-  transition: all .3s
-  background: -moz-linear-gradient(to right bottom, #FBDB89, #F48982)
-  background: -webkit-linear-gradient(to right bottom, #FBDB89, #F48982)
-  background: linear-gradient(to right bottom, #FBDB89, #F48982)
-  -webkit-background-clip: text
-  -moz-background-clip: text
-  background-clip: text
-  -webkit-text-fill-color: transparent
-
-  .fa
-    display: inline
-
+  transition: all ease-in-out .25s
   &:hover
-    background-color: #F2EFEE
+      background-color: #F2EFEE
+  .likes__field
+    cursor: pointer
+    display: flex
+    justify-content: center
+    align-items: center
+    padding: 0 4rem
+    transition: all .3s
+    background: linear-gradient(to right bottom, #FBDB89, #F48982)
+    -webkit-background-clip: text
+    -moz-background-clip: text
+    height: 100px
+    .heart_icon
+        color: #F59A83
+
+    .likes__count
+        padding: 3px 4px
+        position: absolute
+        float: right
+        margin-left: 15px
+        margin-top: -10px
+        vertical-align: top
+        border-radius: 50%
+        background: red
+        font-size: 12px
+        color: #fff
 
 .likes__panel:hover, .likes__field:hover + .likes__panel
   visibility: visible
   opacity: 1
 
-.likes__icon
-  fill: #F59A83
-  height: 3.75rem
-  width: 3.75rem
 
 .likes__panel
   position: absolute
@@ -441,15 +419,8 @@ body
 .recipe__info-buttons
   display: flex
   margin-left: 1.5rem
-  visibility: hidden
-  opacity: 0
   transform: translateY(5px)
   transition: all .4s
-
-.recipe:hover .recipe__info-buttons
-  visibility: visible
-  opacity: 1
-  transform: translateY(0)
 
 .recipe__love
   background-image: linear-gradient(to right bottom, #FBDB89, #F48982)
@@ -492,8 +463,13 @@ body
   list-style: none
   margin-bottom: 3rem
 
+
 .recipe__item
   display: flex
+  i
+      color: #F59A83
+      font-size: 20px
+      margin-right: 5px
 
 .recipe__icon
   height: 1.8rem
@@ -535,7 +511,6 @@ body
 .shopping__list
   list-style: none
   max-height: 77rem
-  overflow: scroll
 
 .shopping__item
   display: flex
@@ -571,7 +546,7 @@ body
     font-size: 1.2rem
 
 .shopping__description
-  flex: 1
+  display: flex
   font-size: 1.3rem
   margin-top: .4rem
   margin-right: 1.5rem
@@ -586,6 +561,9 @@ body
   visibility: hidden
   opacity: 0
   transition: all .5s
+  i
+      color: #F59A83
+      font-size: 19px
 
 .shopping__item:hover .shopping__delete
   opacity: 1
@@ -602,3 +580,15 @@ svg
 .count_recipes, .error_search
     text-align: center
     margin: -13px 10px 15px
+
+
+.like_icon
+    font-size: 23px
+    color: #fff
+
+.recipe__info
+    .fa
+       color: #F59A83
+       font-size: 20px
+       margin-right: 7px
+

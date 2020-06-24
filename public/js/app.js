@@ -2651,6 +2651,384 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/fractional/index.js":
+/*!******************************************!*\
+  !*** ./node_modules/fractional/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*
+fraction.js
+A Javascript fraction library.
+
+Copyright (c) 2009  Erik Garrison <erik@hypervolu.me>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+*/
+
+
+/* Fractions */
+/* 
+ *
+ * Fraction objects are comprised of a numerator and a denomenator.  These
+ * values can be accessed at fraction.numerator and fraction.denomenator.
+ *
+ * Fractions are always returned and stored in lowest-form normalized format.
+ * This is accomplished via Fraction.normalize.
+ *
+ * The following mathematical operations on fractions are supported:
+ *
+ * Fraction.equals
+ * Fraction.add
+ * Fraction.subtract
+ * Fraction.multiply
+ * Fraction.divide
+ *
+ * These operations accept both numbers and fraction objects.  (Best results
+ * are guaranteed when the input is a fraction object.)  They all return a new
+ * Fraction object.
+ *
+ * Usage:
+ *
+ * TODO
+ *
+ */
+
+/*
+ * The Fraction constructor takes one of:
+ *   an explicit numerator (integer) and denominator (integer),
+ *   a string representation of the fraction (string),
+ *   or a floating-point number (float)
+ *
+ * These initialization methods are provided for convenience.  Because of
+ * rounding issues the best results will be given when the fraction is
+ * constructed from an explicit integer numerator and denomenator, and not a
+ * decimal number.
+ *
+ *
+ * e.g. new Fraction(1, 2) --> 1/2
+ *      new Fraction('1/2') --> 1/2
+ *      new Fraction('2 3/4') --> 11/4  (prints as 2 3/4)
+ *
+ */
+Fraction = function(numerator, denominator)
+{
+    /* double argument invocation */
+    if (typeof numerator !== 'undefined' && denominator) {
+        if (typeof(numerator) === 'number' && typeof(denominator) === 'number') {
+            this.numerator = numerator;
+            this.denominator = denominator;
+        } else if (typeof(numerator) === 'string' && typeof(denominator) === 'string') {
+            // what are they?
+            // hmm....
+            // assume they are ints?
+            this.numerator = parseInt(numerator);
+            this.denominator = parseInt(denominator);
+        }
+    /* single-argument invocation */
+    } else if (typeof denominator === 'undefined') {
+        num = numerator; // swap variable names for legibility
+        if (typeof(num) === 'number') {  // just a straight number init
+            this.numerator = num;
+            this.denominator = 1;
+        } else if (typeof(num) === 'string') {
+            var a, b;  // hold the first and second part of the fraction, e.g. a = '1' and b = '2/3' in 1 2/3
+                       // or a = '2/3' and b = undefined if we are just passed a single-part number
+            var arr = num.split(' ')
+            if (arr[0]) a = arr[0]
+            if (arr[1]) b = arr[1]
+            /* compound fraction e.g. 'A B/C' */
+            //  if a is an integer ...
+            if (a % 1 === 0 && b && b.match('/')) {
+                return (new Fraction(a)).add(new Fraction(b));
+            } else if (a && !b) {
+                /* simple fraction e.g. 'A/B' */
+                if (typeof(a) === 'string' && a.match('/')) {
+                    // it's not a whole number... it's actually a fraction without a whole part written
+                    var f = a.split('/');
+                    this.numerator = f[0]; this.denominator = f[1];
+                /* string floating point */
+                } else if (typeof(a) === 'string' && a.match('\.')) {
+                    return new Fraction(parseFloat(a));
+                /* whole number e.g. 'A' */
+                } else { // just passed a whole number as a string
+                    this.numerator = parseInt(a);
+                    this.denominator = 1;
+                }
+            } else {
+                return undefined; // could not parse
+            }
+        }
+    }
+    this.normalize();
+}
+
+
+Fraction.prototype.clone = function()
+{
+    return new Fraction(this.numerator, this.denominator);
+}
+
+
+/* pretty-printer, converts fractions into whole numbers and fractions */
+Fraction.prototype.toString = function()
+{
+    if (this.denominator==='NaN') return 'NaN'
+    var wholepart = (this.numerator/this.denominator>0) ?
+      Math.floor(this.numerator / this.denominator) :
+      Math.ceil(this.numerator / this.denominator)
+    var numerator = this.numerator % this.denominator 
+    var denominator = this.denominator;
+    var result = []; 
+    if (wholepart != 0)  
+        result.push(wholepart);
+    if (numerator != 0)  
+        result.push(((wholepart===0) ? numerator : Math.abs(numerator)) + '/' + denominator);
+    return result.length > 0 ? result.join(' ') : 0;
+}
+
+
+/* destructively rescale the fraction by some integral factor */
+Fraction.prototype.rescale = function(factor)
+{
+    this.numerator *= factor;
+    this.denominator *= factor;
+    return this;
+}
+
+
+Fraction.prototype.add = function(b)
+{
+    var a = this.clone();
+    if (b instanceof Fraction) {
+        b = b.clone();
+    } else {
+        b = new Fraction(b);
+    }
+    td = a.denominator;
+    a.rescale(b.denominator);
+    b.rescale(td);
+
+    a.numerator += b.numerator;
+
+    return a.normalize();
+}
+
+
+Fraction.prototype.subtract = function(b)
+{
+    var a = this.clone();
+    if (b instanceof Fraction) {
+        b = b.clone();  // we scale our argument destructively, so clone
+    } else {
+        b = new Fraction(b);
+    }
+    td = a.denominator;
+    a.rescale(b.denominator);
+    b.rescale(td);
+
+    a.numerator -= b.numerator;
+
+    return a.normalize();
+}
+
+
+Fraction.prototype.multiply = function(b)
+{
+    var a = this.clone();
+    if (b instanceof Fraction)
+    {
+        a.numerator *= b.numerator;
+        a.denominator *= b.denominator;
+    } else if (typeof b === 'number') {
+        a.numerator *= b;
+    } else {
+        return a.multiply(new Fraction(b));
+    }
+    return a.normalize();
+}
+
+Fraction.prototype.divide = function(b)
+{
+    var a = this.clone();
+    if (b instanceof Fraction)
+    {
+        a.numerator *= b.denominator;
+        a.denominator *= b.numerator;
+    } else if (typeof b === 'number') {
+        a.denominator *= b;
+    } else {
+        return a.divide(new Fraction(b));
+    }
+    return a.normalize();
+}
+
+Fraction.prototype.equals = function(b)
+{
+    if (!(b instanceof Fraction)) {
+        b = new Fraction(b);
+    }
+    // fractions that are equal should have equal normalized forms
+    var a = this.clone().normalize();
+    var b = b.clone().normalize();
+    return (a.numerator === b.numerator && a.denominator === b.denominator);
+}
+
+
+/* Utility functions */
+
+/* Destructively normalize the fraction to its smallest representation. 
+ * e.g. 4/16 -> 1/4, 14/28 -> 1/2, etc.
+ * This is called after all math ops.
+ */
+Fraction.prototype.normalize = (function()
+{
+
+    var isFloat = function(n)
+    {
+        return (typeof(n) === 'number' && 
+                ((n > 0 && n % 1 > 0 && n % 1 < 1) || 
+                 (n < 0 && n % -1 < 0 && n % -1 > -1))
+               );
+    }
+
+    var roundToPlaces = function(n, places) 
+    {
+        if (!places) {
+            return Math.round(n);
+        } else {
+            var scalar = Math.pow(10, places);
+            return Math.round(n*scalar)/scalar;
+        }
+    }
+        
+    return (function() {
+
+        // XXX hackish.  Is there a better way to address this issue?
+        //
+        /* first check if we have decimals, and if we do eliminate them
+         * multiply by the 10 ^ number of decimal places in the number
+         * round the number to nine decimal places
+         * to avoid js floating point funnies
+         */
+        if (isFloat(this.denominator)) {
+            var rounded = roundToPlaces(this.denominator, 9);
+            var scaleup = Math.pow(10, rounded.toString().split('.')[1].length);
+            this.denominator = Math.round(this.denominator * scaleup); // this !!! should be a whole number
+            //this.numerator *= scaleup;
+            this.numerator *= scaleup;
+        } 
+        if (isFloat(this.numerator)) {
+            var rounded = roundToPlaces(this.numerator, 9);
+            var scaleup = Math.pow(10, rounded.toString().split('.')[1].length);
+            this.numerator = Math.round(this.numerator * scaleup); // this !!! should be a whole number
+            //this.numerator *= scaleup;
+            this.denominator *= scaleup;
+        }
+        var gcf = Fraction.gcf(this.numerator, this.denominator);
+        this.numerator /= gcf;
+        this.denominator /= gcf;
+        if ((this.numerator < 0 && this.denominator < 0) || (this.numerator > 0 && this.denominator < 0)) {
+            this.numerator *= -1;
+            this.denominator *= -1;
+        }
+        return this;
+    });
+
+})();
+
+
+/* Takes two numbers and returns their greatest common factor.
+ */
+Fraction.gcf = function(a, b)
+{
+
+    var common_factors = [];
+    var fa = Fraction.primeFactors(a);
+    var fb = Fraction.primeFactors(b);
+    // for each factor in fa
+    // if it's also in fb
+    // put it into the common factors
+    fa.forEach(function (factor) 
+    { 
+        var i = fb.indexOf(factor);
+        if (i >= 0) {
+            common_factors.push(factor);
+            fb.splice(i,1); // remove from fb
+        }
+    });
+
+    if (common_factors.length === 0)
+        return 1;
+
+    var gcf = (function() {
+        var r = common_factors[0];
+        var i;
+        for (i=1;i<common_factors.length;i++)
+        {
+            r = r * common_factors[i];
+        }
+        return r;
+    })();
+
+    return gcf;
+
+};
+
+
+// Adapted from: 
+// http://www.btinternet.com/~se16/js/factor.htm
+Fraction.primeFactors = function(n) 
+{
+
+    var num = Math.abs(n);
+    var factors = [];
+    var _factor = 2;  // first potential prime factor
+
+    while (_factor * _factor <= num)  // should we keep looking for factors?
+    {      
+      if (num % _factor === 0)  // this is a factor
+        { 
+            factors.push(_factor);  // so keep it
+            num = num/_factor;  // and divide our search point by it
+        }
+        else
+        {
+            _factor++;  // and increment
+        }
+    }
+
+    if (num != 1)                    // If there is anything left at the end...
+    {                                // ...this must be the last prime factor
+        factors.push(num);           //    so it too should be recorded
+    }
+
+    return factors;                  // Return the prime factors
+}
+
+module.exports.Fraction = Fraction
+
+
+/***/ }),
+
 /***/ "./node_modules/lodash/lodash.js":
 /*!***************************************!*\
   !*** ./node_modules/lodash/lodash.js ***!
@@ -19962,6 +20340,48 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
+/***/ "./node_modules/uniqid/index.js":
+/*!**************************************!*\
+  !*** ./node_modules/uniqid/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(process) {/* 
+(The MIT License)
+Copyright (c) 2014-2019 Halász Ádám <mail@adamhalasz.com>
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+//  Unique Hexatridecimal ID Generator
+// ================================================
+
+//  Dependencies
+// ================================================
+var pid = process && process.pid ? process.pid.toString(36) : '' ;
+var address = '';
+if(false){ var i, mac, networkInterfaces; } 
+
+//  Exports
+// ================================================
+module.exports = module.exports.default = function(prefix, suffix){ return (prefix ? prefix : '') + address + pid + now().toString(36) + (suffix ? suffix : ''); }
+module.exports.process = function(prefix, suffix){ return (prefix ? prefix : '') + pid + now().toString(36) + (suffix ? suffix : ''); }
+module.exports.time    = function(prefix, suffix){ return (prefix ? prefix : '') + now().toString(36) + (suffix ? suffix : ''); }
+
+//  Helpers
+// ================================================
+function now(){
+    var time = Date.now();
+    var last = now.last || time;
+    return now.last = time > last ? time : last + 1;
+}
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../process/browser.js */ "./node_modules/process/browser.js")))
+
+/***/ }),
+
 /***/ "./node_modules/webpack/buildin/global.js":
 /*!***********************************!*\
   !*** (webpack)/buildin/global.js ***!
@@ -20038,16 +20458,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _models_Search__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./models/Search */ "./resources/js/models/Search.js");
-/* harmony import */ var _views_searchView__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./views/searchView */ "./resources/js/views/searchView.js");
-/* harmony import */ var _views_base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./views/base */ "./resources/js/views/base.js");
+/* harmony import */ var _models_Recipe__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./models/Recipe */ "./resources/js/models/Recipe.js");
+/* harmony import */ var _models_ShopList__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./models/ShopList */ "./resources/js/models/ShopList.js");
+/* harmony import */ var _models_Favorite__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./models/Favorite */ "./resources/js/models/Favorite.js");
+/* harmony import */ var _views_searchView__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./views/searchView */ "./resources/js/views/searchView.js");
+/* harmony import */ var _views_recipeView__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./views/recipeView */ "./resources/js/views/recipeView.js");
+/* harmony import */ var _views_shopListView__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./views/shopListView */ "./resources/js/views/shopListView.js");
+/* harmony import */ var _views_favoriteView__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./views/favoriteView */ "./resources/js/views/favoriteView.js");
+/* harmony import */ var _views_base__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./views/base */ "./resources/js/views/base.js");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
-
-
 
 
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
@@ -20060,6 +20483,10 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 
 var state = {};
+window.state = state;
+/**
+ * Search controller
+ */
 
 var searchController = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
@@ -20069,7 +20496,7 @@ var searchController = /*#__PURE__*/function () {
         switch (_context.prev = _context.next) {
           case 0:
             // Get query from input
-            query = _views_searchView__WEBPACK_IMPORTED_MODULE_2__["getInput"](); //TODO
+            query = _views_searchView__WEBPACK_IMPORTED_MODULE_5__["getInput"](); //TODO
 
             if (!query) {
               _context.next = 15;
@@ -20079,28 +20506,29 @@ var searchController = /*#__PURE__*/function () {
 
             // Save search model into state
             state.search = new _models_Search__WEBPACK_IMPORTED_MODULE_1__["default"](query); //Prepare UI to render
+            //searchView.clearInput();
 
-            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearInput"]();
-            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearResult"]();
-
-            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearCountRecipes"]();
-            Object(_views_base__WEBPACK_IMPORTED_MODULE_3__["render_loader"])(_views_base__WEBPACK_IMPORTED_MODULE_3__["elements"].search_parent); //Get a result
+            _views_searchView__WEBPACK_IMPORTED_MODULE_5__["clearResult"]();
+            _views_searchView__WEBPACK_IMPORTED_MODULE_5__["clearCountRecipes"]();
+            _views_searchView__WEBPACK_IMPORTED_MODULE_5__["clearErrorMessage"]();
+            Object(_views_base__WEBPACK_IMPORTED_MODULE_9__["render_loader"])(_views_base__WEBPACK_IMPORTED_MODULE_9__["elements"].search_parent); //Get a result
 
             _context.next = 9;
-            return state.search.getRecipe();
+            return state.search.getResults();
 
           case 9:
             resolve = _context.sent;
 
             if (!resolve) {
-              _views_searchView__WEBPACK_IMPORTED_MODULE_2__["render_error"](query);
+              _views_searchView__WEBPACK_IMPORTED_MODULE_5__["render_error"](query);
             }
 
-            Object(_views_base__WEBPACK_IMPORTED_MODULE_3__["clearLoader"])(); //Render result
+            Object(_views_base__WEBPACK_IMPORTED_MODULE_9__["clearLoader"])(); //Render result
 
-            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["count_recipes"](state.search.result.length);
-            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["clearErrorMessage"]();
-            _views_searchView__WEBPACK_IMPORTED_MODULE_2__["render"](state.search.result);
+            _views_searchView__WEBPACK_IMPORTED_MODULE_5__["count_recipes"](state.search.result.length);
+            _views_searchView__WEBPACK_IMPORTED_MODULE_5__["clearErrorMessage"]();
+            _views_searchView__WEBPACK_IMPORTED_MODULE_5__["render"](state.search.result);
+
 
           case 15:
           case "end":
@@ -20113,11 +20541,142 @@ var searchController = /*#__PURE__*/function () {
   return function searchController() {
     return _ref.apply(this, arguments);
   };
+}(); //setup for seaech by key press
+
+
+var typingInterval;
+var doneTypingInterval = 1000;
+_views_base__WEBPACK_IMPORTED_MODULE_9__["elements"].search_input.addEventListener('keyup', function (e) {
+  clearTimeout(typingInterval);
+
+  if (_views_base__WEBPACK_IMPORTED_MODULE_9__["elements"].search_input.value) {
+    typingInterval = setTimeout(searchController, doneTypingInterval);
+    _views_searchView__WEBPACK_IMPORTED_MODULE_5__["show_clear_icon"]();
+  }
+}); //clear value from input field
+
+_views_base__WEBPACK_IMPORTED_MODULE_9__["elements"].clear_input.addEventListener('click', function () {
+  _views_searchView__WEBPACK_IMPORTED_MODULE_5__["clearInput"]();
+  _views_searchView__WEBPACK_IMPORTED_MODULE_5__["close_clear_icon"]();
+}); //paginate
+
+_views_base__WEBPACK_IMPORTED_MODULE_9__["elements"].results_page.addEventListener('click', function (e) {
+  var btn = e.target.closest('.btn-inline');
+
+  if (btn) {
+    var goToPage = parseInt(btn.dataset["goto"], 10);
+    _views_searchView__WEBPACK_IMPORTED_MODULE_5__["clearResult"]();
+    _views_searchView__WEBPACK_IMPORTED_MODULE_5__["render"](state.search.result, goToPage);
+  }
+});
+/**
+ * RECIPE CONTROLLER
+ */
+
+var recipeController = /*#__PURE__*/function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+    var id;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            id = window.location.hash.replace('#', '');
+
+            if (!id) {
+              _context2.next = 13;
+              break;
+            }
+
+            //prepare UI
+            _views_recipeView__WEBPACK_IMPORTED_MODULE_6__["clear_recipe"]();
+            Object(_views_base__WEBPACK_IMPORTED_MODULE_9__["render_loader"])(_views_base__WEBPACK_IMPORTED_MODULE_9__["elements"].recipe);
+            state.recipe = new _models_Recipe__WEBPACK_IMPORTED_MODULE_2__["default"](id);
+            if (state.search) _views_searchView__WEBPACK_IMPORTED_MODULE_5__["hightLightSelectedRecipe"](id);
+            _context2.next = 8;
+            return state.recipe.getRecipe();
+
+          case 8:
+            state.recipe.parseIngredients();
+            state.recipe.calcCookTime();
+            state.recipe.calcServings(); //render recipe
+
+            Object(_views_base__WEBPACK_IMPORTED_MODULE_9__["clearLoader"])();
+            _views_recipeView__WEBPACK_IMPORTED_MODULE_6__["renderRecipe"](state.recipe, state.favorites.isFavorite(id));
+
+          case 13:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+
+  return function recipeController() {
+    return _ref2.apply(this, arguments);
+  };
 }();
 
-_views_base__WEBPACK_IMPORTED_MODULE_3__["elements"].search_form.addEventListener('submit', function (e) {
-  e.preventDefault();
-  searchController();
+['hashchange', 'load'].forEach(function (event) {
+  return window.addEventListener(event, recipeController);
+});
+
+var shopListController = function shopListController() {
+  if (!state.shopList) state.shopList = new _models_ShopList__WEBPACK_IMPORTED_MODULE_3__["default"]();
+  state.recipe.ingredients.forEach(function (el) {
+    var item = state.shopList.addItem(el.count, el.unit, el.ingredient);
+    _views_shopListView__WEBPACK_IMPORTED_MODULE_7__["render_item"](item);
+  });
+};
+
+_views_base__WEBPACK_IMPORTED_MODULE_9__["elements"].shop_list.addEventListener('click', function (e) {
+  var id = e.target.closest('.shopping__item').dataset.itemid;
+
+  if (e.target.matches('.shopping__delete, .shopping__delete *')) {
+    state.shopList.deleteItem(id); //remove from UI
+
+    _views_shopListView__WEBPACK_IMPORTED_MODULE_7__["delete_item"](id);
+  } else if (e.target.matches('.shopping__count-value')) {
+    var val = parseFloat(e.target.value, 10);
+    state.shopList.updateСount(id, val);
+  }
+});
+window.addEventListener('load', function () {
+  state.favorites = new _models_Favorite__WEBPACK_IMPORTED_MODULE_4__["default"]();
+  state.favorites.readStorage();
+  state.favorites.favorites.forEach(function (el) {
+    return _views_favoriteView__WEBPACK_IMPORTED_MODULE_8__["render_favorites"](el);
+  });
+});
+
+var favoritesController = function favoritesController() {
+  if (!state.favorites) state.favorites = new _models_Favorite__WEBPACK_IMPORTED_MODULE_4__["default"]();
+  var currentId = state.recipe.id;
+
+  if (!state.favorites.isFavorite(currentId)) {
+    var newFavorite = state.favorites.addFavorite(currentId, state.recipe.title, state.recipe.img, state.recipe.publisher);
+    _views_favoriteView__WEBPACK_IMPORTED_MODULE_8__["toggleFavoriteBtn"](true);
+    _views_favoriteView__WEBPACK_IMPORTED_MODULE_8__["render_favorites"](newFavorite);
+  } else {
+    state.favorites.deleteFavorite(currentId);
+    _views_favoriteView__WEBPACK_IMPORTED_MODULE_8__["toggleFavoriteBtn"](false);
+    _views_favoriteView__WEBPACK_IMPORTED_MODULE_8__["delete_favorite"](currentId);
+  }
+};
+
+_views_base__WEBPACK_IMPORTED_MODULE_9__["elements"].recipe.addEventListener('click', function (e) {
+  if (e.target.matches('.btn-decrease *')) {
+    if (state.recipe.servings > 1) {
+      state.recipe.updateServings('dec');
+      _views_recipeView__WEBPACK_IMPORTED_MODULE_6__["update_servings_ingredients"](state.recipe);
+    }
+  } else if (e.target.matches('.btn-increase, .btn-increase *')) {
+    state.recipe.updateServings('inc');
+    _views_recipeView__WEBPACK_IMPORTED_MODULE_6__["update_servings_ingredients"](state.recipe);
+  } else if (e.target.matches('.recipe__btn-add, .recipe__btn-add *')) {
+    shopListController();
+  } else if (e.target.matches('.recipe__love, .recipe__love *')) {
+    favoritesController();
+  }
 });
 
 /***/ }),
@@ -20154,6 +20713,246 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 /***/ }),
 
+/***/ "./resources/js/models/Favorite.js":
+/*!*****************************************!*\
+  !*** ./resources/js/models/Favorite.js ***!
+  \*****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Favorite; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Favorite = /*#__PURE__*/function () {
+  function Favorite() {
+    _classCallCheck(this, Favorite);
+
+    this.favorites = [];
+  }
+
+  _createClass(Favorite, [{
+    key: "addFavorite",
+    value: function addFavorite(id, title, img, publisher) {
+      var favorite = {
+        id: id,
+        title: title,
+        img: img,
+        publisher: publisher
+      };
+      this.favorites.push(favorite);
+      this.persistData();
+      return favorite;
+    }
+  }, {
+    key: "deleteFavorite",
+    value: function deleteFavorite(id) {
+      var index = this.favorites.findIndex(function (el) {
+        return el.id === id;
+      });
+      this.favorites.splice(index, 1);
+      this.persistData();
+    }
+  }, {
+    key: "isFavorite",
+    value: function isFavorite(id) {
+      return this.favorites.findIndex(function (el) {
+        return el.id === id;
+      }) !== -1;
+    }
+  }, {
+    key: "persistData",
+    value: function persistData() {
+      localStorage.setItem('favorites', JSON.stringify(this.favorites));
+    }
+  }, {
+    key: "readStorage",
+    value: function readStorage() {
+      var storage = JSON.parse(localStorage.getItem('favorites'));
+      if (storage) this.favorites = storage;
+    }
+  }]);
+
+  return Favorite;
+}();
+
+
+
+/***/ }),
+
+/***/ "./resources/js/models/Recipe.js":
+/*!***************************************!*\
+  !*** ./resources/js/models/Recipe.js ***!
+  \***************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Recipe; });
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+var Recipe = /*#__PURE__*/function () {
+  function Recipe(id) {
+    _classCallCheck(this, Recipe);
+
+    this.id = id;
+  }
+
+  _createClass(Recipe, [{
+    key: "getRecipe",
+    value: function () {
+      var _getRecipe = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var proxy, url, res;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.prev = 0;
+                proxy = 'https://cors-anywhere.herokuapp.com/';
+                url = "".concat(proxy, "https://forkify-api.herokuapp.com/api/get?rId=").concat(this.id);
+                _context.next = 5;
+                return axios__WEBPACK_IMPORTED_MODULE_1___default()("".concat(url));
+
+              case 5:
+                res = _context.sent;
+                this.title = res.data.recipe.title;
+                this.img = res.data.recipe.image_url;
+                this.ingredients = res.data.recipe.ingredients;
+                this.publisher = res.data.recipe.publisher;
+                this.publisher_url = res.data.recipe.publisher_url;
+                this.rank = res.data.recipe.social_rank;
+                _context.next = 17;
+                break;
+
+              case 14:
+                _context.prev = 14;
+                _context.t0 = _context["catch"](0);
+                console.log(_context.t0);
+
+              case 17:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this, [[0, 14]]);
+      }));
+
+      function getRecipe() {
+        return _getRecipe.apply(this, arguments);
+      }
+
+      return getRecipe;
+    }()
+  }, {
+    key: "calcCookTime",
+    value: function calcCookTime() {
+      var numOfIngredients = this.ingredients.length;
+      var periods = Math.ceil(numOfIngredients / 3);
+      this.time = periods * 15;
+    }
+  }, {
+    key: "calcServings",
+    value: function calcServings() {
+      this.servings = 1;
+    }
+  }, {
+    key: "parseIngredients",
+    value: function parseIngredients() {
+      var unitsLong = ['tablespoons', 'tablespoon', 'ounces', 'ounce', 'teaspoons', 'teaspoon', 'cups', 'pounds'];
+      var unitsShort = ['tbsp', 'tbsp', 'oz', 'oz', 'tsp', 'tsp', 'cup', 'pound'];
+      var units = [].concat(unitsShort, ['kg', 'g']);
+      var newIngredients = this.ingredients.map(function (el) {
+        var ingredient = el.toLowerCase();
+        unitsLong.forEach(function (unit, index) {
+          ingredient = ingredient.replace(unit, unitsShort[index]);
+        });
+        ingredient = ingredient.replace(/ *\([^)]*\) */g, ' ');
+        var arrIng = ingredient.split(' ');
+        var unitIndex = arrIng.findIndex(function (element) {
+          return units.includes(element);
+        });
+        var objIng;
+
+        if (unitIndex > -1) {
+          var arrCount = arrIng.slice(0, unitIndex);
+          var count;
+
+          if (arrCount.length === 1) {
+            count = eval(arrIng[0].replace('-', '+'));
+          } else {
+            count = eval(arrIng.slice(0, unitIndex).join('+'));
+          }
+
+          objIng = {
+            count: count,
+            unit: arrIng[unitIndex],
+            ingredient: arrIng.slice(unitIndex + 1).join(' ')
+          };
+        } else if (parseInt(arrIng[0], 10)) {
+          // There is NO unit, but 1st element is number
+          objIng = {
+            count: parseInt(arrIng[0], 10),
+            unit: '',
+            ingredient: arrIng.slice(1).join(' ')
+          };
+        } else if (unitIndex === -1) {
+          // There is NO unit and NO number in 1st position
+          objIng = {
+            count: 1,
+            unit: '',
+            ingredient: ingredient
+          };
+        }
+
+        return objIng;
+      });
+      this.ingredients = newIngredients;
+    }
+  }, {
+    key: "updateServings",
+    value: function updateServings(type) {
+      var _this = this;
+
+      //servings
+      var newServings = type === 'dec' ? this.servings - 1 : this.servings + 1; //ingredients
+
+      this.ingredients.forEach(function (ing) {
+        ing.count *= newServings / _this.servings;
+      });
+      this.servings = newServings;
+    }
+  }]);
+
+  return Recipe;
+}();
+
+
+;
+
+/***/ }),
+
 /***/ "./resources/js/models/Search.js":
 /*!***************************************!*\
   !*** ./resources/js/models/Search.js ***!
@@ -20180,8 +20979,6 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-
-
 var Search = /*#__PURE__*/function () {
   function Search(query) {
     _classCallCheck(this, Search);
@@ -20190,9 +20987,9 @@ var Search = /*#__PURE__*/function () {
   }
 
   _createClass(Search, [{
-    key: "getRecipe",
+    key: "getResults",
     value: function () {
-      var _getRecipe = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+      var _getResults = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
         var proxy, url, res;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
@@ -20213,7 +21010,7 @@ var Search = /*#__PURE__*/function () {
               case 9:
                 _context.prev = 9;
                 _context.t0 = _context["catch"](2);
-                console.log(_context.t0); //throw new Error(e);
+                console.log(_context.t0);
 
               case 12:
               case "end":
@@ -20223,15 +21020,78 @@ var Search = /*#__PURE__*/function () {
         }, _callee, this, [[2, 9]]);
       }));
 
-      function getRecipe() {
-        return _getRecipe.apply(this, arguments);
+      function getResults() {
+        return _getResults.apply(this, arguments);
       }
 
-      return getRecipe;
+      return getResults;
     }()
   }]);
 
   return Search;
+}();
+
+
+
+/***/ }),
+
+/***/ "./resources/js/models/ShopList.js":
+/*!*****************************************!*\
+  !*** ./resources/js/models/ShopList.js ***!
+  \*****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ShopList; });
+/* harmony import */ var uniqid__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! uniqid */ "./node_modules/uniqid/index.js");
+/* harmony import */ var uniqid__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(uniqid__WEBPACK_IMPORTED_MODULE_0__);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+var ShopList = /*#__PURE__*/function () {
+  function ShopList() {
+    _classCallCheck(this, ShopList);
+
+    this.items = [];
+  }
+
+  _createClass(ShopList, [{
+    key: "addItem",
+    value: function addItem(count, unit, ingredient) {
+      var item = {
+        id: uniqid__WEBPACK_IMPORTED_MODULE_0___default()(),
+        count: count,
+        unit: unit,
+        ingredient: ingredient
+      };
+      this.items.push(item);
+      return item;
+    }
+  }, {
+    key: "deleteItem",
+    value: function deleteItem(id) {
+      var index = this.items.findIndex(function (el) {
+        return el.id === id;
+      });
+      this.items.splice(index, 1);
+    }
+  }, {
+    key: "update\u0421ount",
+    value: function updateOunt(id, newCount) {
+      this.items.find(function (el) {
+        return el.id === id;
+      }).count = newCount;
+    }
+  }]);
+
+  return ShopList;
 }();
 
 
@@ -20260,14 +21120,25 @@ var elements = {
   //result list to render searched items
   search_parent: document.querySelector('.results'),
   //parent section for redner
-  single_recipe: document.querySelector('.recipe') //section for render single recipe
+
+  single_recipe: document.querySelector('.recipe'),
+  //section for render single recipe
+  results_page: document.querySelector('.results__pages'),
+  // for paginate buttons
+  recipe: document.querySelector('.recipe'),
+  //recipe sections
+  shop_list: document.querySelector('.shopping__list'),
+  //shop list section
+  clear_input: document.querySelector('.clear_input'),
+  //icon for clear field
+  favorites_list: document.querySelector('.likes__list') //list of favorites
+
 
 };
 var elementsString = {
   loader: 'custom_loader',
   count_recipe: 'count_recipes',
   error_search: 'error_search'
-
 };
 var render_loader = function render_loader(parent) {
   var template_loader = "\n            <div class=\"custom_loader\">\n                <svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n                    viewBox=\"0 0 100 100\" enable-background=\"new 0 0 100 100\" xml:space=\"preserve\">\n                    <rect fill=\"#FBDB89\" width=\"3\" height=\"100\" transform=\"translate(0) rotate(180 3 50)\">\n                    <animate\n                        attributeName=\"height\"\n                        attributeType=\"XML\"\n                        dur=\"1s\"\n                        values=\"30; 100; 30\"\n                        repeatCount=\"indefinite\"/>\n                    </rect>\n                    <rect x=\"17\" fill=\"#FBDB89\" width=\"3\" height=\"100\" transform=\"translate(0) rotate(180 20 50)\">\n                        <animate\n                            attributeName=\"height\"\n                            attributeType=\"XML\"\n                            dur=\"1s\"\n                            values=\"30; 100; 30\"\n                            repeatCount=\"indefinite\"\n                            begin=\"0.1s\"/>\n                    </rect>\n                    <rect x=\"40\" fill=\"#FBDB89\" width=\"3\" height=\"100\" transform=\"translate(0) rotate(180 40 50)\">\n                        <animate\n                            attributeName=\"height\"\n                            attributeType=\"XML\"\n                            dur=\"1s\"\n                            values=\"30; 100; 30\"\n                            repeatCount=\"indefinite\"\n                            begin=\"0.3s\"/>\n                    </rect>\n                    <rect x=\"60\" fill=\"#FBDB89\" width=\"3\" height=\"100\" transform=\"translate(0) rotate(180 58 50)\">\n                        <animate\n                            attributeName=\"height\"\n                            attributeType=\"XML\"\n                            dur=\"1s\"\n                            values=\"30; 100; 30\"\n                            repeatCount=\"indefinite\"\n                            begin=\"0.5s\"/>\n                    </rect>\n                    <rect x=\"80\" fill=\"#FBDB89\" width=\"3\" height=\"100\" transform=\"translate(0) rotate(180 76 50)\">\n                        <animate\n                            attributeName=\"height\"\n                            attributeType=\"XML\"\n                            dur=\"1s\"\n                            values=\"30; 100; 30\"\n                            repeatCount=\"indefinite\"\n                            begin=\"0.1s\"/>\n                    </rect>\n                </svg>\n            </div>";
@@ -20280,11 +21151,124 @@ var clearLoader = function clearLoader() {
 
 /***/ }),
 
+/***/ "./resources/js/views/favoriteView.js":
+/*!********************************************!*\
+  !*** ./resources/js/views/favoriteView.js ***!
+  \********************************************/
+/*! exports provided: toggleFavoriteBtn, render_favorites, delete_favorite */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toggleFavoriteBtn", function() { return toggleFavoriteBtn; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render_favorites", function() { return render_favorites; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "delete_favorite", function() { return delete_favorite; });
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base */ "./resources/js/views/base.js");
+/* harmony import */ var _searchView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./searchView */ "./resources/js/views/searchView.js");
+
+
+var toggleFavoriteBtn = function toggleFavoriteBtn(isFavorite) {
+  if (isFavorite) {
+    document.querySelector('.recipe__love').classList.toggle('fas');
+  } else {
+    document.querySelector('.recipe__love').classList.remove('fas');
+    document.querySelector('.recipe__love').classList.add('far');
+  }
+};
+var render_favorites = function render_favorites(favorite) {
+  var template_favorite = "\n    <li>\n        <a class=\"likes__link\" href=\"#".concat(favorite.id, "\">\n            <figure class=\"likes__fig\">\n                <img src=\"").concat(favorite.img, "\" alt=\"").concat(favorite.title, "\">\n            </figure>\n            <div class=\"likes__data\">\n                <h4 class=\"likes__name\">").concat(Object(_searchView__WEBPACK_IMPORTED_MODULE_1__["limitRecipeTitle"])(favorite.title), "</h4>\n                <p class=\"likes__author\">").concat(favorite.publisher, "</p>\n            </div>\n        </a>\n    </li>");
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].favorites_list.insertAdjacentHTML('beforeend', template_favorite);
+};
+var delete_favorite = function delete_favorite(id) {
+  var el = document.querySelector("a[href*=\"".concat(id, "\"]")).parentElement;
+  if (el) el.parentElement.removeChild(el);
+};
+
+/***/ }),
+
+/***/ "./resources/js/views/recipeView.js":
+/*!******************************************!*\
+  !*** ./resources/js/views/recipeView.js ***!
+  \******************************************/
+/*! exports provided: clear_recipe, renderRecipe, update_servings_ingredients */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear_recipe", function() { return clear_recipe; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "renderRecipe", function() { return renderRecipe; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "update_servings_ingredients", function() { return update_servings_ingredients; });
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base */ "./resources/js/views/base.js");
+/* harmony import */ var fractional__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! fractional */ "./node_modules/fractional/index.js");
+/* harmony import */ var fractional__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(fractional__WEBPACK_IMPORTED_MODULE_1__);
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
+
+var clear_recipe = function clear_recipe() {
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].recipe.innerHTML = '';
+};
+
+var formatCount = function formatCount(count) {
+  if (count) {
+    var _count$toString$split = count.toString().split('.').map(function (el) {
+      return parseInt(el, 10);
+    }),
+        _count$toString$split2 = _slicedToArray(_count$toString$split, 2),
+        _int = _count$toString$split2[0],
+        dec = _count$toString$split2[1];
+
+    if (!dec) return count;
+
+    if (_int === 0) {
+      var fr = new fractional__WEBPACK_IMPORTED_MODULE_1__["Fraction"](count);
+      return "".concat(fr.numerator, "/").concat(fr.denominator);
+    } else {
+      var _fr = new fractional__WEBPACK_IMPORTED_MODULE_1__["Fraction"](count - _int);
+
+      return "".concat(_int, " ").concat(_fr.numerator, "/").concat(_fr.denominator);
+    }
+  }
+
+  return '?';
+};
+
+var create_ingredients = function create_ingredients(ingredient) {
+  return "\n    <li class=\"recipe__item\">\n        <i class=\"fas fa-check-circle\"></i>\n        <div class=\"recipe__count\">".concat(formatCount(ingredient.count), "</div>\n        <div class=\"recipe__ingredient\">\n            <span class=\"recipe__unit\">").concat(ingredient.unit, "</span>\n            ").concat(ingredient.ingredient, "\n        </div>\n    </li>");
+};
+
+var renderRecipe = function renderRecipe(recipe, isFavorite) {
+  var template_recipe = "\n            <figure class=\"recipe__fig\">\n                <img src=\"".concat(recipe.img, "\" alt=\"").concat(recipe.title, "}\" class=\"recipe__img\">\n                <h1 class=\"recipe__title\">\n                    <span>").concat(recipe.title, "</span>\n                </h1>\n            </figure>\n            <div class=\"recipe__details\">\n                <div class=\"recipe__info\">\n                    <i class=\"fa fa-clock\"></i>\n                    <span class=\"recipe__info-data recipe__info-data--minutes\">").concat(recipe.time, "</span>\n                    <span class=\"recipe__info-text\"> minutes</span>\n                </div>\n                <div class=\"recipe__info\">\n\n                    <i class=\"fa fa-utensils\"></i>\n                    <span class=\"recipe__info-data recipe__info-data--people\">").concat(recipe.servings, "</span>\n                    <span class=\"recipe__info-text\"> servings</span>\n\n                    <div class=\"recipe__info-buttons\">\n                        <button class=\"btn-tiny btn-decrease\">\n                            <i class=\"fa fa-minus-circle\"></i>\n                        </button>\n                        <button class=\"btn-tiny btn-increase\">\n                            <i class=\"fa fa-plus-circle\"></i>\n                        </button>\n                    </div>\n\n                </div>\n                <button class=\"recipe__love like_icon ").concat(isFavorite ? 'fas' : 'far', " fa-heart\"></button>\n            </div>\n\n            <div class=\"recipe__ingredients\">\n                <ul class=\"recipe__ingredient-list\">\n                    ").concat(recipe.ingredients.map(function (el) {
+    return create_ingredients(el);
+  }).join(''), "\n                </ul>\n\n                <button class=\"btn-small recipe__btn recipe__btn-add\">\n                    <i class=\"fa fa-shopping-cart\"></i>\n                    <span>Add to shopping list</span>\n                </button>\n            </div>\n\n            <div class=\"recipe__directions\">\n                <h2 class=\"heading-2\">How to cook it</h2>\n                <p class=\"recipe__directions-text\">\n                    This recipe was carefully designed and tested by\n                    <span class=\"recipe__by\">").concat(recipe.publisher, "</span>. Please check out directions at their website.\n                </p>\n                <a class=\"btn-small recipe__btn\" href=\"").concat(recipe.publisher_url, "}\" target=\"_blank\">\n                    <span>Directions</span>\n                    <i class=\"fa fa-caret-right\"></i>\n                </a>\n            </div>");
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].recipe.insertAdjacentHTML('afterbegin', template_recipe);
+};
+var update_servings_ingredients = function update_servings_ingredients(recipe) {
+  document.querySelector('.recipe__info-data--people').textContent = recipe.servings;
+  var countElements = Array.from(document.querySelectorAll('.recipe__count'));
+  countElements.forEach(function (el, i) {
+    el.textContent = formatCount(recipe.ingredients[i].count);
+  });
+};
+
+/***/ }),
+
 /***/ "./resources/js/views/searchView.js":
 /*!******************************************!*\
   !*** ./resources/js/views/searchView.js ***!
   \******************************************/
-/*! exports provided: getInput, clearInput, clearResult, clearCountRecipes, clearErrorMessage, count_recipes, render_error, render */
+/*! exports provided: getInput, clearInput, clearResult, show_clear_icon, close_clear_icon, hightLightSelectedRecipe, clearCountRecipes, clearErrorMessage, limitRecipeTitle, count_recipes, render_error, create_paginate, render */
+
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20292,10 +21276,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getInput", function() { return getInput; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearInput", function() { return clearInput; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearResult", function() { return clearResult; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "show_clear_icon", function() { return show_clear_icon; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "close_clear_icon", function() { return close_clear_icon; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hightLightSelectedRecipe", function() { return hightLightSelectedRecipe; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearCountRecipes", function() { return clearCountRecipes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearErrorMessage", function() { return clearErrorMessage; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "limitRecipeTitle", function() { return limitRecipeTitle; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "count_recipes", function() { return count_recipes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render_error", function() { return render_error; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "create_paginate", function() { return create_paginate; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base */ "./resources/js/views/base.js");
 
@@ -20308,8 +21297,36 @@ var clearInput = function clearInput() {
 }; //clear input
 
 var clearResult = function clearResult() {
-  return _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_res_list.innerHTML = '';
-}; //clear result list
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_res_list.innerHTML = '';
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].results_page.innerHTML = '';
+};
+var show_clear_icon = function show_clear_icon() {
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].clear_input.style.display = 'block';
+};
+var close_clear_icon = function close_clear_icon() {
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].clear_input.style.display = 'none';
+};
+var hightLightSelectedRecipe = function hightLightSelectedRecipe(id) {
+  var arrLinks = Array.from(document.querySelectorAll('.results__link'));
+  arrLinks.forEach(function (el) {
+    el.classList.remove('results__link--active');
+  });
+  document.querySelector("a[href*=\"".concat(id, "\"]")).classList.add('results__link--active');
+};
+var clearCountRecipes = function clearCountRecipes() {
+  var count_rec = document.querySelector(".".concat(_base__WEBPACK_IMPORTED_MODULE_0__["elementsString"].count_recipe));
+  if (count_rec) count_rec.parentNode.removeChild(count_rec);
+};
+var clearErrorMessage = function clearErrorMessage() {
+  var err_msg = document.querySelector(".".concat(_base__WEBPACK_IMPORTED_MODULE_0__["elementsString"].error_search));
+  if (err_msg) err_msg.parentNode.removeChild(err_msg);
+};
+/**
+ * Function that splice title, if his length > 17
+ *
+ * @param {string} title
+ * @param {num} limit
+ */
 
 var clearCountRecipes = function clearCountRecipes() {
   var count_rec = document.querySelector(".".concat(_base__WEBPACK_IMPORTED_MODULE_0__["elementsString"].count_recipe));
@@ -20345,10 +21362,8 @@ var limitRecipeTitle = function limitRecipeTitle(title) {
   return title;
 };
 /**
- *
- *  Method for prepare render recipes
+ * Method for prepare render recipes
  */
-
 
 var renderRecipe = function renderRecipe(recipe) {
   var template_recipe = "<li>\n            <a class=\"results__link\" href=\"#".concat(recipe.recipe_id, "\">\n                <figure class=\"results__fig\">\n                    <img src=\"").concat(recipe.image_url, "\" alt=\"").concat(recipe.title, "\">\n                </figure>\n                <div class=\"results__data\">\n                    <h4 class=\"results__name\">").concat(limitRecipeTitle(recipe.title), "</h4>\n                    <p class=\"results__author\">").concat(recipe.publisher, "</p>\n                </div>\n            </a>\n        </li>\n    ");
@@ -20357,20 +21372,67 @@ var renderRecipe = function renderRecipe(recipe) {
 
 var count_recipes = function count_recipes(num) {
   var template_count_recipes = "\n        <div class=\"count_recipes\">\n            <h1>Search results: <span>".concat(num, "</span> </h1>\n        </div>");
-  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_parent.insertAdjacentHTML('afterbegin', template_count_recipes);
+
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_parent.insertAdjacentHTML("afterbegin", template_count_recipes);
 };
 var render_error = function render_error(val) {
   var template_error = "\n    <div class=\"error_search\">\n        <h1>Nothing search by: <span>".concat(val, "</span> </h1>\n    </div>");
-  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_parent.insertAdjacentHTML('afterbegin', template_error);
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].search_parent.insertAdjacentHTML("afterbegin", template_error);
 };
-/***
- *
+
+var template_paginate_button = function template_paginate_button(page, type) {
+  var template_button = "\n    <button class=\"btn-inline results__btn--".concat(type === 'prev' ? 'prev' : 'next', "\" data-goto=\"").concat(type === 'prev' ? page - 1 : page + 1, "\">\n        <i class=\"fa fa-").concat(type === 'prev' ? 'arrow-left' : 'arrow-right', "\"></i>\n        <span>Page ").concat(type === 'prev' ? page - 1 : page + 1, "</span>\n    </button>");
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].results_page.insertAdjacentHTML('afterbegin', template_button);
+};
+
+var create_paginate = function create_paginate(page, numOfResults, resPerPage) {
+  var pages = Math.ceil(numOfResults / resPerPage);
+  var button;
+
+  if (page === 1 && pages > 1) {
+    button = template_paginate_button(page, 'next');
+  } else if (page < pages) {
+    button = "".concat(template_paginate_button(page, 'prev'), "\n                ").concat(template_paginate_button(page, 'next'));
+  } else if (page === pages && pages > 1) {
+    button = template_paginate_button(page, 'prev');
+  }
+};
+/**
+
  * Render all searched recipes
- *
  */
 
 var render = function render(recipes) {
-  recipes.forEach(renderRecipe);
+  var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+  var resPerPage = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 10;
+  var start = (page - 1) * resPerPage;
+  var end = page * resPerPage;
+  recipes.slice(start, end).forEach(renderRecipe);
+  create_paginate(page, recipes.length, resPerPage);
+};
+
+/***/ }),
+
+/***/ "./resources/js/views/shopListView.js":
+/*!********************************************!*\
+  !*** ./resources/js/views/shopListView.js ***!
+  \********************************************/
+/*! exports provided: render_item, delete_item */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render_item", function() { return render_item; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "delete_item", function() { return delete_item; });
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base */ "./resources/js/views/base.js");
+
+var render_item = function render_item(item) {
+  var template_item = "\n    <li class=\"shopping__item\" data-itemid=".concat(item.id, ">\n        <div class=\"shopping__count\">\n            <input type=\"number\" value=\"").concat(item.count, "\" step=\"").concat(item.count, "\" class=\"shopping__count-value\">\n            <p>").concat(item.unit, "</p>\n        </div>\n        <p class=\"shopping__description\">").concat(item.ingredient, "</p>\n        <button class=\"shopping__delete btn-tiny\">\n            <i class=\"far fa-times-circle\"></i>\n        </button>\n    </li>");
+  _base__WEBPACK_IMPORTED_MODULE_0__["elements"].shop_list.insertAdjacentHTML('beforeend', template_item);
+};
+var delete_item = function delete_item(id) {
+  var item = document.querySelector("[data-itemid=\"".concat(id, "\"]"));
+  if (item) item.parentElement.removeChild(item);
 };
 
 /***/ }),
