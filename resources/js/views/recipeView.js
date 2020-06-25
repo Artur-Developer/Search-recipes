@@ -31,7 +31,7 @@ const create_ingredients = ingredient => `
         </div>
     </li>`;
 
-export const renderRecipe = recipe => {
+export const renderRecipe = (recipe, isFavorite) => {
     const template_recipe = `
             <figure class="recipe__fig">
                 <img src="${recipe.img}" alt="${recipe.title}}" class="recipe__img">
@@ -61,9 +61,7 @@ export const renderRecipe = recipe => {
                     </div>
 
                 </div>
-                <button class="recipe__love">
-                    <i class="like_icon far fa-heart"></i>
-                </button>
+                <button class="recipe__love like_icon ${isFavorite ? 'fas' : 'far'} fa-heart"></button>
             </div>
 
             <div class="recipe__ingredients">

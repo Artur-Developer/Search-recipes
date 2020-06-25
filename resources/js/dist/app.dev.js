@@ -59,6 +59,7 @@ var searchController = function searchController() {
           return regeneratorRuntime.awrap(state.search.getResults());
 
         case 10:
+
           resolve = _context.sent;
 
           if (!resolve) {

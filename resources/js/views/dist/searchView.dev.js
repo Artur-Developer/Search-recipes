@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
 exports.render = exports.create_paginate = exports.render_error = exports.count_recipes = exports.clearErrorMessage = exports.clearCountRecipes = exports.clearResult = exports.clearInput = exports.getInput = void 0;
 
 var _base = require("./base");
@@ -25,6 +26,13 @@ var clearResult = function clearResult() {
   _base.elements.search_res_list.innerHTML = '';
   _base.elements.results_page.innerHTML = '';
 }; //clear result list
+
+/**
+ * Function that splice title, if his length > 17
+ *
+ * @param {string} title
+ * @param {num} limit
+ */
 
 
 exports.clearResult = clearResult;
@@ -115,8 +123,6 @@ var create_paginate = function create_paginate(page, numOfResults, resPerPage) {
 /**
  * Render all searched recipes
  */
-
-
 exports.create_paginate = create_paginate;
 
 var render = function render(recipes) {
