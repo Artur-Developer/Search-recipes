@@ -22,7 +22,10 @@
 App for search any recipes for cooking at home. 
 =======
 
+The project is here http://193.164.149.120
+
 Developed by:
 * [@tearofenemy](https://github.com/tearofenemy) - Frontend (Also some backend stuff)
-* [@artur_lead](https://github.com/Artur-Developer) - Team Lead (Backend & Frontend)
-* [@ruslan_stud](https://github.com/semailk) - Begginer Backend DeveloperW
+* [@artur_lead](https://github.com/Artur-Developer) - Team Lead (Backend & Frontend & Designer)
+* [@BohdanPetrenko] (https://github.com/BohdanPetrenko) - Middle Backend Developer
+* [@ruslan_stud](https://github.com/semailk) - Jonior Backend Developer
